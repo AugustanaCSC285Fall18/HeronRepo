@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="291.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.FileWindowController">
+   <children>
+      <Button fx:id="BrowseBtn" layoutX="122.0" layoutY="216.0" mnemonicParsing="false" onAction="#handleBrowse" prefHeight="32.0" prefWidth="76.0" text="Browse" />
+      <Button fx:id="NextBtn" layoutX="252.0" layoutY="236.0" mnemonicParsing="false" onAction="#handleNext" prefHeight="23.0" prefWidth="54.0" text="Next" />
+   </children>
+</AnchorPane>

@@ -27,6 +27,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class MainWindowController {
+	
+	private Video vid;	
 	@FXML
 	private Button button;
 	@FXML
@@ -73,8 +75,7 @@ public class MainWindowController {
 				// into a JavaFX Image object
 				// and then schedule an update to
 				// show that image in the ImageView
-				timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jump 5s"));
-				
+				timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jump 5s"));			
 				showNextFrame();
 				
 			}
@@ -118,6 +119,7 @@ public class MainWindowController {
 	}
 	
 
+
 	public void moveBack() throws InterruptedException {
 		timer.shutdown();  // stop the auto-playing
 		timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
@@ -127,5 +129,10 @@ public class MainWindowController {
 	}
 
 	
+
+	public void setVideo(Video video) {
+		vid = video;
+	}
+
 	
 }
