@@ -27,4 +27,6 @@ public class Video {
 	public double getDurationInSeconds() {
 		return (endFrameNum- startFrameNum) / frameRate;
 	}
+	
+	
 }
