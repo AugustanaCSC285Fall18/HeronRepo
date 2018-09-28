@@ -53,7 +53,7 @@ public class MainWindowController {
 
 	@FXML
 	protected void startButton(ActionEvent event) {
-		capture.open("S:\\CLASS\\CS\\285\\sample_videos\\sample1.mp4");
+		vid.getVideoCap().open(vid.getFile().getAbsolutePath());
 
 		Runnable frameGrabber = new Runnable() {
 			public void run() {
@@ -64,7 +64,7 @@ public class MainWindowController {
 				// show that image in the ImageView
 
 				Mat frame = new Mat();
-				capture.read(frame);
+				vid.getVideoCap().read(frame);
 
 				MatOfByte buffer = new MatOfByte();
 				Imgcodecs.imencode(".png", frame, buffer);

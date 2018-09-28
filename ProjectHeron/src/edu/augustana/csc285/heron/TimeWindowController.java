@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 /**
  * This class is the GUI for selecting the start and end time of what will be recorded
@@ -107,7 +108,7 @@ public class TimeWindowController {
 	public void handleNext() throws IOException {
 		if(vid.getStartTime() < vid.getEndTime()) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
-		AnchorPane root = (AnchorPane)loader.load();
+		BorderPane root = (BorderPane)loader.load();
 		MainWindowController mainController = loader.getController();
 		mainController.setVideo(vid);
 		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
