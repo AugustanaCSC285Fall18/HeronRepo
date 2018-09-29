@@ -78,8 +78,7 @@ public class MainWindowController {
 		// sets the video capture to the start
 		System.out.println("vid start: " + vid.getStartTime());
 		vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, vid.getStartTime());
-		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));
-		
+		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));		
 		showNextFrame();
 	}
 	
