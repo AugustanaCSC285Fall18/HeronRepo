@@ -21,21 +21,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
-
 public class MainWindowController {
-
 
 	@FXML
 	private Button button;
@@ -49,12 +47,29 @@ public class MainWindowController {
 	private Button mForward;
 	@FXML
 	private ChoiceBox timeChange;
+	@FXML
+	private Group group;
+	@FXML
+	private Canvas canvasOverVideo;
 
 	private ScheduledExecutorService timer;
 	private int [] timeTake = new int[] {1,5};
 	private int timeJump = 1;
 	private Video vid;
 
+	@FXML public void initialize() {
+		System.out.println("init called");
+		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
+			@Override 
+			public void handle(MouseEvent e) {
+				System.out.println("x: " + e.getX() + ", y: " + e.getY());
+				GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
+				gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+			}
+		};
+
+		canvasOverVideo.setOnMouseClicked(eventHandler);		
+	}
 
 	@FXML
 	protected void startButton(ActionEvent event) {
@@ -63,14 +78,7 @@ public class MainWindowController {
 		// sets the video capture to the start
 		System.out.println("vid start: " + vid.getStartTime());
 		vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, vid.getStartTime());
-		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));
-		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
-			@Override 
-			public void handle(MouseEvent e) {
-				System.out.println("x: " + e.getX() + ", y: " + e.getY());
-			}
-		};
-		videoFrame.setOnMouseClicked(eventHandler);
+		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));		
 		showNextFrame();
 	}
 
@@ -126,8 +134,6 @@ public class MainWindowController {
 		}
 
 	}
-
-
 
 	public void setVideo(Video video) {
 		vid = video;
