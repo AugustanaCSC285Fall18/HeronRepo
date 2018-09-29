@@ -118,5 +118,10 @@ public class TimeWindowController {
 		primary.setScene(timeScene);
 		}
 	}
+	@FXML
+	public void wholeVideo() {
+		vid.setStartTime(0);
+		vid.setEndTime((int)(vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
+	}
 	
 }
