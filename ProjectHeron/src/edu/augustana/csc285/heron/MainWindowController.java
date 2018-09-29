@@ -1,16 +1,16 @@
-
 package edu.augustana.csc285.heron;
 
-import java.awt.Point;
-import java.awt.event.InputEvent;
 import java.io.ByteArrayInputStream;
-import java.util.concurrent.Executors;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
@@ -26,10 +26,19 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
+
 
 public class MainWindowController {
 	
-	private Video vid;	
 	@FXML
 	private Button button;
 	@FXML
@@ -42,54 +51,35 @@ public class MainWindowController {
 	private Button mForward;
 	@FXML
 	private ChoiceBox timeChange;
-	private VideoCapture capture = new VideoCapture();
 	private ScheduledExecutorService timer;
 	private int [] timeTake = new int[] {1,5};
 	private int timeJump = 1;
+	private Video vid;
+
 	
-	
-	public Image grabFrame() {
-		Mat frame = new Mat();
-		capture.read(frame);		
-		MatOfByte buffer = new MatOfByte();
-		Imgcodecs.imencode(".png", frame, buffer);
-		Image imageToShow = new Image(new ByteArrayInputStream(buffer.toArray()));
-
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				videoFrame.setImage(imageToShow);
-			}
-		});
-
-		return imageToShow;
-	}
-
 	@FXML
 	protected void startButton(ActionEvent event) {
-		capture.open("S:\\CLASS\\CS\\285\\sample_videos\\sample1.mp4");
-
-		Runnable frameGrabber = new Runnable() {
-			public void run() {
-				// get one frame from the video
-				// convert it from a opencv Mat object
-				// into a JavaFX Image object
-				// and then schedule an update to
-				// show that image in the ImageView
-				timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jump 5s"));			
-				showNextFrame();
-				
-			}
+		System.out.println("vid path: " + vid.getFile().getAbsolutePath());
+		vid.getVideoCap().open(vid.getFile().getAbsolutePath());
+		// sets the video capture to the start
+		System.out.println("vid start: " + vid.getStartTime());
+		vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, vid.getStartTime());
+		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));
+		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
+	         @Override 
+	         public void handle(MouseEvent e) {
+	        	 System.out.println("x: " + e.getX() + ", y: " + e.getY());
+	         }
 		};
-
-		this.timer = Executors.newSingleThreadScheduledExecutor();
-		this.timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
-
+		
+		videoFrame.setOnMouseClicked(eventHandler);
+		showNextFrame();
 	}
+	
 	
 	public void showNextFrame() {
 		Mat frame = new Mat();
-		capture.read(frame);
+		vid.getVideoCap().read(frame);
 
 		MatOfByte buffer = new MatOfByte();
 		Imgcodecs.imencode(".png", frame, buffer);
@@ -97,7 +87,8 @@ public class MainWindowController {
 		Platform.runLater(new Runnable() {
 			@Override public void run() {
 				videoFrame.setImage(imageToShow); 
-				pgbar.setProgress(capture.get(Videoio.CAP_PROP_POS_FRAMES)/capture.get(Videoio.CV_CAP_PROP_FRAME_COUNT));
+				pgbar.setProgress(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES)/vid.getVideoCap().get(Videoio.CV_CAP_PROP_FRAME_COUNT));
+
 				timeChange.getSelectionModel().selectedIndexProperty()
 		        .addListener(new ChangeListener<Number>() {
 		            public void changed(ObservableValue ov, Number value, Number new_value) {
@@ -111,22 +102,32 @@ public class MainWindowController {
 	
 	
 	public void moveForward() throws InterruptedException {
-		timer.shutdown();  // stop the auto-playing
-		timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
-		int newFrameNum = (int)(capture.get(Videoio.CAP_PROP_POS_FRAMES) + timeJump * capture.get(Videoio.CAP_PROP_FPS));
-		capture.set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
-		showNextFrame();
+		if (timer != null && !timer.isShutdown()) {
+			timer.shutdown();  // stop the auto-playing
+			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
+		}
+		int newFrameNum = (int)(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) + timeJump * vid.getVideoCap().get(Videoio.CAP_PROP_FPS));
+		if(vid.getEndTime() >= newFrameNum){
+			vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
+			showNextFrame();
+		}
 		
 	}
 	
 
 
 	public void moveBack() throws InterruptedException {
-		timer.shutdown();  // stop the auto-playing
-		timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
-		int newFrameNum = (int)(capture.get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * capture.get(Videoio.CAP_PROP_FPS));
-		capture.set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
-		showNextFrame();
+		if (timer != null && !timer.isShutdown()) {
+			timer.shutdown();  // stop the auto-playing
+			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
+		}
+		
+		int newFrameNum = (int)(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * vid.getVideoCap().get(Videoio.CAP_PROP_FPS));
+		if(vid.getStartTime() <= newFrameNum){
+			vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
+			showNextFrame();
+		}
+		
 	}
 
 	
@@ -134,7 +135,4 @@ public class MainWindowController {
 	public void setVideo(Video video) {
 		vid = video;
 	}
-
-	
 }
-

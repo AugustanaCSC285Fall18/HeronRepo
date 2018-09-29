@@ -1,10 +1,15 @@
 package edu.augustana.csc285.heron;
 
 import org.opencv.core.Core;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+
+import javafx.application.*;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.fxml.*;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 
 
