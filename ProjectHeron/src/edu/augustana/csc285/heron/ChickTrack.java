@@ -30,11 +30,11 @@ public class ChickTrack {
 	/**
 	 * This adds a data point to the arrayList of points given
 	 * the coordinates of the chick and the time of the video
-	 * @param time -the time in the recording
+	 * @param  -the time in the recording
 	 * @param x -the x coordinate of the chick's location
 	 * @param y -the y coordinate of the chick's location
 	 */
-	public void addPosition(int time, int x, int y) {
+	public void addPosition(int time, double x, double y) {
 		positionHistory.add(new TimePosition(time, x, y));
 	}
 	

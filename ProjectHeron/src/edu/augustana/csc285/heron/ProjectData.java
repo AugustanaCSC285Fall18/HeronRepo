@@ -49,7 +49,7 @@ public class ProjectData {
 			if(!contains(chickID)) {
 				chickList.add(new ChickTrack(chickID, new TimePosition(Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.nextLine().trim().substring(1)))));
 			} else {
-				getChickTrack(chickID).addPosition(Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.nextLine().trim().substring(1)));
+				getChickTrack(chickID).addPosition(Integer.parseInt(scanner.next().trim()), Double.parseDouble(scanner.next().trim()), Double.parseDouble(scanner.nextLine().trim().substring(1)));
 			}
 		}
 		scanner.close();

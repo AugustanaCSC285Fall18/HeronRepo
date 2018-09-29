@@ -2,21 +2,21 @@ package edu.augustana.csc285.heron;
 
 public class TimePosition {
 	
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	private int time;
 	
-	public TimePosition(int time, int x, int y) {
+	public TimePosition(int time, double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.time = time;
 	}
 	
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 	
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 	
