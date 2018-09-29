@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.MainWindowController">
@@ -17,10 +19,16 @@
             <ProgressBar fx:id="pgbar" prefWidth="200.0" progress="0.0" BorderPane.alignment="CENTER" />
          </bottom>
          <left>
-            <Button fx:id="button" mnemonicParsing="false" onAction="#moveBack" text="Move Backward" BorderPane.alignment="CENTER" />
+            <Button fx:id="button" mnemonicParsing="false" onAction="#moveBack" text="Move Backward" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin></Button>
          </left>
          <right>
-            <Button fx:id="button" mnemonicParsing="false" onAction="#moveForward" text="Move Forward" BorderPane.alignment="CENTER" />
+            <Button fx:id="button" mnemonicParsing="false" onAction="#moveForward" text="Move Forward" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin></Button>
          </right>
          <top>
             <ChoiceBox fx:id="timeChange" prefWidth="150.0" BorderPane.alignment="CENTER" />
@@ -28,7 +36,13 @@
       </BorderPane>
    </left>
    <bottom>
-      <Button fx:id="button" mnemonicParsing="false" onAction="#startButton" text="Button" BorderPane.alignment="CENTER" />
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="111.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="button" layoutX="373.0" layoutY="72.0" mnemonicParsing="false" onAction="#startButton" text="Start" />
+            <Button fx:id="addChickButton" layoutX="214.0" layoutY="2.0" mnemonicParsing="false" text="Add chick" />
+            <ChoiceBox fx:id="chickList" layoutX="36.0" layoutY="2.0" prefWidth="150.0" />
+         </children>
+      </AnchorPane>
    </bottom>
 
 </BorderPane>

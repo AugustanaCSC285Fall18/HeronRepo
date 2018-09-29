@@ -26,14 +26,17 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 
 public class MainWindowController {
-	
-		
+
+
 	@FXML
 	private Button button;
 	@FXML
@@ -46,13 +49,13 @@ public class MainWindowController {
 	private Button mForward;
 	@FXML
 	private ChoiceBox timeChange;
-	
+
 	private ScheduledExecutorService timer;
 	private int [] timeTake = new int[] {1,5};
 	private int timeJump = 1;
 	private Video vid;
 
-	
+
 	@FXML
 	protected void startButton(ActionEvent event) {
 		System.out.println("vid path: " + vid.getFile().getAbsolutePath());
@@ -62,17 +65,16 @@ public class MainWindowController {
 		vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, vid.getStartTime());
 		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
-	         @Override 
-	         public void handle(MouseEvent e) {
-	        	 System.out.println("x: " + e.getX() + ", y: " + e.getY());
-	         }
+			@Override 
+			public void handle(MouseEvent e) {
+				System.out.println("x: " + e.getX() + ", y: " + e.getY());
+			}
 		};
-		
 		videoFrame.setOnMouseClicked(eventHandler);
 		showNextFrame();
 	}
-	
-	
+
+
 	public void showNextFrame() {
 		Mat frame = new Mat();
 		vid.getVideoCap().read(frame);
@@ -85,17 +87,17 @@ public class MainWindowController {
 				videoFrame.setImage(imageToShow); 
 				pgbar.setProgress(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES)/vid.getVideoCap().get(Videoio.CV_CAP_PROP_FRAME_COUNT));
 				timeChange.getSelectionModel().selectedIndexProperty()
-		        .addListener(new ChangeListener<Number>() {
-		            public void changed(ObservableValue ov, Number value, Number new_value) {
-		              timeJump = timeTake[new_value.intValue()];
-		            }
-		          });
+				.addListener(new ChangeListener<Number>() {
+					public void changed(ObservableValue ov, Number value, Number new_value) {
+						timeJump = timeTake[new_value.intValue()];
+					}
+				});
 			}
 		});		
-		
+
 	}
-	
-	
+
+
 	public void moveForward() throws InterruptedException {
 		if (timer != null && !timer.isShutdown()) {
 			timer.shutdown();  // stop the auto-playing
@@ -106,9 +108,9 @@ public class MainWindowController {
 			vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
 			showNextFrame();
 		}
-		
+
 	}
-	
+
 
 
 	public void moveBack() throws InterruptedException {
@@ -116,16 +118,16 @@ public class MainWindowController {
 			timer.shutdown();  // stop the auto-playing
 			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
-		
+
 		int newFrameNum = (int)(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * vid.getVideoCap().get(Videoio.CAP_PROP_FPS));
 		if(vid.getStartTime() <= newFrameNum){
 			vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
 			showNextFrame();
 		}
-		
+
 	}
 
-	
+
 
 	public void setVideo(Video video) {
 		vid = video;
