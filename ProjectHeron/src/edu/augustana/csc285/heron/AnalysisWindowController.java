@@ -42,7 +42,7 @@ public class AnalysisWindowController {
 		System.out.println(project.getVideo().getEndFrameNum());
 	}
 	@FXML
-	public void intialize() {
+	public void initialize() {
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true);
 		ObservableList<String> items = FXCollections.observableArrayList();
@@ -56,8 +56,7 @@ public class AnalysisWindowController {
 			// this method changes the frame of video capture based on the videoBar
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
 					Number newValue) {
-				
-				
+								
 				Platform.runLater(new Runnable() {
 
 					@Override

@@ -14,6 +14,7 @@ import org.opencv.core.MatOfByte;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
+import datamodel.ProjectData;
 import datamodel.Video;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -74,7 +75,7 @@ public class MainWindowController {
 	private ScheduledExecutorService timer;
 	private int [] timeTake = new int[] {1,5};
 	private int timeJump = 1;
-	private Video vid;
+	private ProjectData project;
 
 	@FXML public void initialize() {
 		chickID.setEditable(false);
@@ -101,11 +102,11 @@ public class MainWindowController {
 
 	@FXML
 	protected void startButton(ActionEvent event) {
-		System.out.println("vid path: " + vid.getFilePath());
-		vid.getVideoCap().open(vid.getFilePath());
+		System.out.println("vid path: " + project.getVideo().getFilePath());
+		project.getVideo().getVideoCap().open(project.getVideo().getFilePath());
 		// sets the video capture to the start
-		System.out.println("vid start: " + vid.getStartFrameNum());
-		vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, vid.getStartFrameNum());
+		System.out.println("vid start: " + project.getVideo().getStartFrameNum());
+		project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, project.getVideo().getStartFrameNum());
 		timeChange.setItems(FXCollections.observableArrayList("Jump 1s", "Jumps 5s"));		
 		showNextFrame();
 	}
@@ -113,7 +114,7 @@ public class MainWindowController {
 
 	public void showNextFrame() {
 		Mat frame = new Mat();
-		vid.getVideoCap().read(frame);
+		project.getVideo().getVideoCap().read(frame);
 
 		MatOfByte buffer = new MatOfByte();
 		Imgcodecs.imencode(".png", frame, buffer);
@@ -121,7 +122,7 @@ public class MainWindowController {
 		Platform.runLater(new Runnable() {
 			@Override public void run() {
 				videoFrame.setImage(imageToShow); 
-				pgbar.setProgress(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES)/vid.getVideoCap().get(Videoio.CV_CAP_PROP_FRAME_COUNT));
+				pgbar.setProgress(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES)/project.getVideo().getVideoCap().get(Videoio.CV_CAP_PROP_FRAME_COUNT));
 
 				timeChange.getSelectionModel().selectedIndexProperty()
 				.addListener(new ChangeListener<Number>() {
@@ -140,9 +141,9 @@ public class MainWindowController {
 			timer.shutdown();  // stop the auto-playing
 			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
-		int newFrameNum = (int)(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) + timeJump * vid.getVideoCap().get(Videoio.CAP_PROP_FPS));
-		if(vid.getEndFrameNum() >= newFrameNum){
-			vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
+		int newFrameNum = (int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) + timeJump * project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FPS));
+		if(project.getVideo().getEndFrameNum() >= newFrameNum){
+			project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
 			showNextFrame();
 		}
 
@@ -156,9 +157,9 @@ public class MainWindowController {
 			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
 
-		int newFrameNum = (int)(vid.getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * vid.getVideoCap().get(Videoio.CAP_PROP_FPS));
-		if(vid.getStartFrameNum() <= newFrameNum){
-			vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
+		int newFrameNum = (int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FPS));
+		if(project.getVideo().getStartFrameNum() <= newFrameNum){
+			project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
 			showNextFrame();
 		}
 
@@ -166,8 +167,8 @@ public class MainWindowController {
 	
 
 	
-	public void setVideo(Video video) {
-		vid = video;
+	public void setProjectData(ProjectData project) {
+		this.project = project;
 	}
 	
 	
