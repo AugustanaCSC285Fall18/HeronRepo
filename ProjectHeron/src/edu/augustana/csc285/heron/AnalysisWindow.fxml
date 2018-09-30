@@ -9,7 +9,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
    <children>
       <AnchorPane layoutX="-18.0" layoutY="-14.0" prefHeight="463.0" prefWidth="527.0">
          <children>
@@ -25,6 +25,8 @@
             <Label layoutX="61.0" layoutY="353.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
             <Button fx:id="showBtn" layoutX="264.0" layoutY="349.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
             <Canvas fx:id="canvasOverVideo" height="240.0" layoutX="101.0" layoutY="59.0" width="339.0" />
+            <Button fx:id="button" layoutX="483.0" layoutY="207.0" mnemonicParsing="false" onAction="#mForward" text="Move Forward" />
+            <Button fx:id="button" layoutX="14.0" layoutY="207.0" mnemonicParsing="false" onAction="#mBack" text="Move Back" />
          </children>
       </AnchorPane>
    </children>

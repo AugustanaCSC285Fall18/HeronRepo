@@ -56,7 +56,8 @@ public class AnalysisWindowController {
 			// this method changes the frame of video capture based on the videoBar
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
 					Number newValue) {
-								
+				
+				
 				Platform.runLater(new Runnable() {
 
 					@Override
