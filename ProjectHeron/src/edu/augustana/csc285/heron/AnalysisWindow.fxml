@@ -11,7 +11,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
    <children>
-      <AnchorPane layoutX="-18.0" layoutY="-14.0" prefHeight="463.0" prefWidth="527.0">
+      <AnchorPane layoutX="-3.0" layoutY="-21.0" prefHeight="442.0" prefWidth="564.0">
          <children>
             <ImageView fx:id="imageView" fitHeight="240.0" fitWidth="339.0" layoutX="101.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true" />
             <ChoiceBox fx:id="chickIDs" layoutX="112.0" layoutY="324.0" prefWidth="150.0" />
@@ -25,8 +25,6 @@
             <Label layoutX="61.0" layoutY="353.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
             <Button fx:id="showBtn" layoutX="264.0" layoutY="349.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
             <Canvas fx:id="canvasOverVideo" height="240.0" layoutX="101.0" layoutY="59.0" width="339.0" />
-            <Button fx:id="button" layoutX="483.0" layoutY="207.0" mnemonicParsing="false" onAction="#mForward" text="Move Forward" />
-            <Button fx:id="button" layoutX="14.0" layoutY="207.0" mnemonicParsing="false" onAction="#mBack" text="Move Back" />
          </children>
       </AnchorPane>
    </children>
