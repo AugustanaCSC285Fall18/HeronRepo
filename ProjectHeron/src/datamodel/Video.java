@@ -125,7 +125,6 @@ public class Video {
 	public void setArenaBounds(Rectangle trackArea) {
 		this.trackArea = trackArea;
 	}
-	
 	public Mat grabFrame() {
 		// init everything
 		Mat frame = new Mat();

@@ -41,9 +41,11 @@ public class AnalysisWindowController {
 	@FXML private ImageView imageView;
 	@FXML private Slider videoBar;
 	private int currentFrameRecord;
+	private ArrayList<Integer> currentFrameNum;
 	private Map<String, Integer> currentFrameRecordToChick;
 	
 	public void setProjectData(ProjectData project) {
+		currentFrameNum = new ArrayList<Integer>();
 		this.project = project;
 		for(datamodel.AnimalTrack animal : project.getUnassignedSegments()) {
 			paths.getItems().add(animal.getAnimalID());
@@ -55,7 +57,6 @@ public class AnalysisWindowController {
 	
 	@FXML
 	public void initialize() {
-		
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true); 
 		GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
@@ -63,15 +64,18 @@ public class AnalysisWindowController {
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
 			@Override 
 			public void handle(MouseEvent e) {
+				
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY) {
-					gc.setFill(Color.BLACK);
-					gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
-					if(project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory().) {
+					
+					if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime((int)((double)videoBar.getValue() / 100 * project.getVideo().getTotalNumFrames()))) {
 						project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
+						gc.setFill(Color.BLACK);
+						gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
 					}
+					currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 				} else if (e.getButton() == MouseButton.SECONDARY) {
-					gc.clearRect(e.getX()-5, e.getY()-5, 10, 10);
+					gc.clearRect(e.getX()-5, e.getY()-5, 20, 20);
 				}
 			}
 		};
@@ -88,7 +92,8 @@ public class AnalysisWindowController {
 			// this method changes the frame of video capture based on the videoBar
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
 					Number newValue) {
-								
+				
+				
 				Platform.runLater(new Runnable() {
 
 					@Override
@@ -141,5 +146,13 @@ public class AnalysisWindowController {
 				gc.fillOval(point.getX(), point.getY(), 10, 10);
 			}
 		}
+	}
+	public boolean exist(ArrayList<Integer> list, int num) {
+		for(int i = 0; i < list.size(); i++) {
+			if(list.get(i) == num) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
