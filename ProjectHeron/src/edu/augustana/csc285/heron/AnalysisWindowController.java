@@ -57,8 +57,7 @@ public class AnalysisWindowController {
 	public void initialize() {
 		
 		chickID.setEditable(false);
-		confirmBtn.setDisable(true);
-		videoBar.valueProperty().addListener((obs, oldV, newV) -> showFrameAt(newV.intValue())); 
+		confirmBtn.setDisable(true); 
 		GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 		
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
@@ -78,6 +77,28 @@ public class AnalysisWindowController {
 		chickIDs.setItems(items);
 		ObservableList<String> pathList = FXCollections.observableArrayList();
 		paths.setItems(pathList);
+
+		//videoBar.valueProperty().addListener((obs, oldV, newV) -> showFrameAt(newV.intValue()));
+		videoBar.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			// this method changes the frame of video capture based on the videoBar
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+					Number newValue) {
+								
+				Platform.runLater(new Runnable() {
+
+					@Override
+					// this method sets the frame of videoView
+					public void run() {
+						showFrameAt((int)(newValue.doubleValue() / 100 * project.getVideo().getTotalNumFrames()));
+					}
+
+				});
+			}
+
+		});
+
 	}
 
 	@FXML

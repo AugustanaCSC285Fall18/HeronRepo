@@ -48,9 +48,9 @@ public class MyProjectData {
 			String chickID = scanner.next();
 			//if there is no chickID in the array, then it adds a new ChickTrack, otherwise it adds the point to the existing chickID
 			if(!contains(chickID)) {
-				chickList.add(new AnimalTrack(chickID, new TimePoint(Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.nextLine().trim().substring(1)))));
+				chickList.add(new AnimalTrack(chickID));
 			} else {
-				getChickTrack(chickID).addPosition(Integer.parseInt(scanner.next().trim()), Double.parseDouble(scanner.next().trim()), Double.parseDouble(scanner.nextLine().trim().substring(1)));
+				getChickTrack(chickID).add( Double.parseDouble(scanner.next().trim()), Double.parseDouble(scanner.nextLine().trim().substring(1)),Integer.parseInt(scanner.next().trim()));
 			}
 		}
 		scanner.close();
@@ -63,7 +63,7 @@ public class MyProjectData {
 	 */
 	private boolean contains(String chickID) {
 		for(AnimalTrack chick : chickList) {
-			if(chick.getChickID().equals(chickID)) {
+			if(chick.getAnimalID().equals(chickID)) {
 				return true;
 			}
 		}
@@ -78,7 +78,7 @@ public class MyProjectData {
 	 */
 	public AnimalTrack getChickTrack(String chickID) {
 		for(AnimalTrack chick : chickList) {
-			if(chick.getChickID().equals(chickID)) {
+			if(chick.getAnimalID().equals(chickID)) {
 				return chick;
 			}
 		}
@@ -117,7 +117,7 @@ public class MyProjectData {
 		for(AnimalTrack chick : chickList) {
 			for(TimePoint point : chick.getPositionHistory()) {
 				//the format is ChickID, Time, X, Y
-				writer.println(chick.getChickID() + "," + point.getTime() + "," + point.getX() + "," + point.getY());
+				writer.println(chick.getAnimalID() + "," + point.getFrameNum() + "," + point.getX() + "," + point.getY());
 			}
 		}
 		writer.close();
