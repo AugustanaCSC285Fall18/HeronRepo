@@ -1,10 +1,12 @@
 package edu.augustana.csc285.heron;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.opencv.videoio.VideoCapture;
 
+import datamodel.Video;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,15 +32,15 @@ public class FileWindowController {
 	/**
 	 * This method allows the user to select a file that will be
 	 * used for the video
+	 * @throws FileNotFoundException 
 	 */
 	@FXML
-	public void handleBrowse() {
+	public void handleBrowse() throws FileNotFoundException {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open Image File");
 		Window mainWindow = BrowseBtn.getScene().getWindow();
 		File chosenFile = fileChooser.showOpenDialog(mainWindow);
-		VideoCapture vidCap = new VideoCapture();
-		vid = new Video(vidCap, chosenFile);
+		vid = new Video(chosenFile.getAbsolutePath());
 	}
 	/**
 	 * This method allows the FileWindow to go to the TimeWindow
@@ -46,7 +48,7 @@ public class FileWindowController {
 	 */
 	@FXML
 	public void handleNext() throws IOException {
-		if(vid.getFile() != null) {
+		if(vid.getFilePath() != null) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("TimeWindow.fxml"));
 		AnchorPane root = (AnchorPane)loader.load();
 		TimeWindowController timeController = loader.getController();

@@ -1,5 +1,6 @@
-package edu.augustana.csc285.heron;
+package datamodel;
 
+import edu.augustana.csc285.heron.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,9 +15,9 @@ import java.util.Scanner;
  * @date 9/22/2018
  *
  */
-public class ProjectData {
+public class MyProjectData {
 	
-	private List<ChickTrack> chickList;
+	private List<AnimalTrack> chickList;
 	private File file;
 	private Video video;
 	
@@ -27,8 +28,8 @@ public class ProjectData {
 	 * @param currentRecord -the file that the information will be saved to/read from
 	 * @param recording -the video that will be used to gather the information
 	 */
-	public ProjectData(File currentRecord, Video recording){
-		chickList = new ArrayList<ChickTrack>();
+	public MyProjectData(File currentRecord, Video recording){
+		chickList = new ArrayList<AnimalTrack>();
 		video = recording;
 		file = currentRecord;
 		//this is where the file is going to be read if there is any information stored
@@ -47,9 +48,9 @@ public class ProjectData {
 			String chickID = scanner.next();
 			//if there is no chickID in the array, then it adds a new ChickTrack, otherwise it adds the point to the existing chickID
 			if(!contains(chickID)) {
-				chickList.add(new ChickTrack(chickID, new TimePosition(Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.nextLine().trim().substring(1)))));
+				chickList.add(new AnimalTrack(chickID, new TimePoint(Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.nextLine().trim().substring(1)))));
 			} else {
-				getChickTrack(chickID).addPosition(Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.next().trim()), Integer.parseInt(scanner.nextLine().trim().substring(1)));
+				getChickTrack(chickID).addPosition(Integer.parseInt(scanner.next().trim()), Double.parseDouble(scanner.next().trim()), Double.parseDouble(scanner.nextLine().trim().substring(1)));
 			}
 		}
 		scanner.close();
@@ -61,7 +62,7 @@ public class ProjectData {
 	 * @return -whether or not the ID is in the arrayList
 	 */
 	private boolean contains(String chickID) {
-		for(ChickTrack chick : chickList) {
+		for(AnimalTrack chick : chickList) {
 			if(chick.getChickID().equals(chickID)) {
 				return true;
 			}
@@ -75,8 +76,8 @@ public class ProjectData {
 	 * @param chickID -the ChickTrack that is being asked for
 	 * @return -the ChickTrack that is being asked for
 	 */
-	public ChickTrack getChickTrack(String chickID) {
-		for(ChickTrack chick : chickList) {
+	public AnimalTrack getChickTrack(String chickID) {
+		for(AnimalTrack chick : chickList) {
 			if(chick.getChickID().equals(chickID)) {
 				return chick;
 			}
@@ -88,7 +89,7 @@ public class ProjectData {
 	 * This method allows the addition of a new ChickTrack
 	 * @param newChick -the new ChickTrack that is going to be added
 	 */
-	public void addChickTrack(ChickTrack newChick) {
+	public void addChickTrack(AnimalTrack newChick) {
 		chickList.add(newChick);
 	}
 	
@@ -113,8 +114,8 @@ public class ProjectData {
 		}
 		//this writes the information into the csv file
 		writer.println("ChickID, Time, X, Y");
-		for(ChickTrack chick : chickList) {
-			for(TimePosition point : chick.getPositionHistory()) {
+		for(AnimalTrack chick : chickList) {
+			for(TimePoint point : chick.getPositionHistory()) {
 				//the format is ChickID, Time, X, Y
 				writer.println(chick.getChickID() + "," + point.getTime() + "," + point.getX() + "," + point.getY());
 			}

@@ -7,6 +7,7 @@ import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
+import datamodel.Video;
 import edu.augustana.csc285.heron.Utils;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -38,7 +39,7 @@ public class TimeWindowController {
 	 */
 	@FXML
 	public void selectStartTime() {
-		vid.setStartTime((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		vid.setStartFrameNum((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 	}
 	
 	/**
@@ -46,7 +47,7 @@ public class TimeWindowController {
 	 */
 	@FXML
 	public void selectEndTime() {
-		vid.setEndTime((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		vid.setEndFrameNum((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 	}
 	/**
 	 * This loads the video so that the user can select the start and end time
@@ -55,10 +56,10 @@ public class TimeWindowController {
 	 */
 	public void setVideo(Video video) {
 		vid = video;		
-		if (vid.getFile() != null) {
+		if (vid.getFilePath() != null) {
 			try {
 				// start the video capture
-				vid.getVideoCap().open(vid.getFile().getAbsolutePath());
+				vid.getVideoCap().open(vid.getFilePath());
 				
 				// sets the video capture to the start
 				vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, 0);
@@ -106,17 +107,22 @@ public class TimeWindowController {
 	 */
 	@FXML
 	public void handleNext() throws IOException {
-		if(vid.getStartTime() < vid.getEndTime()) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
+		if(vid.getStartFrameNum() < vid.getEndFrameNum()) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("AutoTrackWindow.fxml"));
 		BorderPane root = (BorderPane)loader.load();
-		MainWindowController mainController = loader.getController();
-		mainController.setVideo(vid);
+		AutoTrackWindowController autoTrackController = loader.getController();
+		autoTrackController.setProjectData(vid);
 		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
 		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		Stage primary = (Stage) nextBtn.getScene().getWindow();
 		primary.setScene(timeScene);
 		}
+	}
+	@FXML
+	public void wholeVideo() {
+		vid.setStartFrameNum(0);
+		vid.setEndFrameNum((int)(vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
 	}
 	
 }
