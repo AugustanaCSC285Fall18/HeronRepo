@@ -64,14 +64,13 @@ public class AnalysisWindowController {
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
 			@Override 
 			public void handle(MouseEvent e) {
-				
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY && !exist(currentFrameNum,project.getVideo().getCurrentFrameNum())) {
 					gc.setFill(Color.BLACK);
 					gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
 					currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 				} else if (e.getButton() == MouseButton.SECONDARY) {
-					gc.clearRect(e.getX()-5, e.getY()-5, 20, 20);
+					gc.clearRect(e.getX()-5, e.getY()-5, 25, 25);
 				}
 			}
 		};
