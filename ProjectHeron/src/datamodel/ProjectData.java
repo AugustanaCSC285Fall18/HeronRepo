@@ -27,14 +27,21 @@ public class ProjectData {
 		return unassignedSegments;
 	}
 	
-	public AnimalTrack getAnimalTrack(String id) {
+	public AnimalTrack getAnimalTrackInUnassignedSegments(String id) {
 		for(AnimalTrack animal : unassignedSegments) {
-			if(animal.getAnimalID() == id) {
+			if(animal.getAnimalID().equals(id)) {
 				return animal;
 			}
 		}
 		return null;
 	}
-
+	public AnimalTrack getAnimalTrackInTracks(String id) {
+		for(AnimalTrack animal : tracks) {
+			if(animal.getAnimalID().equals(id) ) {
+				return animal;
+			}
+		}
+		return null;
+	}
 	
 }

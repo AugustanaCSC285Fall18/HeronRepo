@@ -65,9 +65,13 @@ public class AnalysisWindowController {
 			@Override 
 			public void handle(MouseEvent e) {
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
-				if (e.getButton() == MouseButton.PRIMARY && !exist(currentFrameNum,project.getVideo().getCurrentFrameNum())) {
-					gc.setFill(Color.BLACK);
-					gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+				if (e.getButton() == MouseButton.PRIMARY) {
+					
+					if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime((int)((double)videoBar.getValue() / 100 * project.getVideo().getTotalNumFrames()))) {
+						project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
+						gc.setFill(Color.BLACK);
+						gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+					}
 					currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 				} else if (e.getButton() == MouseButton.SECONDARY) {
 					gc.clearRect(e.getX()-5, e.getY()-5, 25, 25);
@@ -137,7 +141,7 @@ public class AnalysisWindowController {
 			GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 			gc.setFill(Color.RED);
 			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
-			for(datamodel.TimePoint point : project.getAnimalTrack(paths.getValue()).getPositionHistory()) {
+			for(datamodel.TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
 				gc.fillOval(point.getX(), point.getY(), 10, 10);
 			}
 		}

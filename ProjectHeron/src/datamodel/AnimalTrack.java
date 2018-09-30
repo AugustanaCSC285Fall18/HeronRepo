@@ -71,6 +71,14 @@ public class AnimalTrack {
 		return "AnimalTrack[id=" + animalID + ",numPts=" + positionHistory.size() + " startFrame=" + startFrame + " endFrame=" + endFrame + "]";
 	}
 	
+	public boolean alreadyHasTime(int frameNum) {
+		for(TimePoint point : positionHistory) {
+			if(point.getFrameNum() == frameNum) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public TimePoint getFinalTimePoint() {
 		return positionHistory.get(positionHistory.size() - 1);
 	}
