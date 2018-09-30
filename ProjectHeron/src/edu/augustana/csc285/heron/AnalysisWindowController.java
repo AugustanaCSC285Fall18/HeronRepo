@@ -67,6 +67,9 @@ public class AnalysisWindowController {
 				if (e.getButton() == MouseButton.PRIMARY) {
 					gc.setFill(Color.BLACK);
 					gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+					if(project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory().) {
+						project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
+					}
 				} else if (e.getButton() == MouseButton.SECONDARY) {
 					gc.clearRect(e.getX()-5, e.getY()-5, 10, 10);
 				}
@@ -134,7 +137,7 @@ public class AnalysisWindowController {
 			GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 			gc.setFill(Color.RED);
 			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
-			for(datamodel.TimePoint point : project.getAnimalTrack(paths.getValue()).getPositionHistory()) {
+			for(datamodel.TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
 				gc.fillOval(point.getX(), point.getY(), 10, 10);
 			}
 		}
