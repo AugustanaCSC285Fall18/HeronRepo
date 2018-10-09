@@ -46,6 +46,13 @@ public class TimePoint {
 		return this.frameNum - other.frameNum;
 	}
 	
+	public boolean equals(Object o) {
+		if(o instanceof TimePoint) {
+			TimePoint p = (TimePoint) o;
+			return this.x == p.x && this.y == p.y && this.frameNum == p.frameNum;
+		}
+		return false;
+	}
 	public int compareTo(TimePoint other) {		
 		return this.getTimeDiffAfter(other);
 	}

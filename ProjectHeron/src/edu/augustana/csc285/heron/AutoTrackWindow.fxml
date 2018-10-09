@@ -18,10 +18,6 @@
             <Insets bottom="20.0" top="20.0" />
          </BorderPane.margin>
          <children>
-            <Label text="Start frame:" />
-            <TextField fx:id="textfieldStartFrame" prefWidth="100.0" promptText="Frame#" text="5500" />
-            <Label layoutX="10.0" layoutY="15.0" text="End:" />
-            <TextField fx:id="textfieldEndFrame" layoutX="47.0" layoutY="10.0" prefWidth="100.0" promptText="Frame#" text="5800" />
             <Button fx:id="btnAutotrack" mnemonicParsing="false" onAction="#handleStartAutotracking" text="Start Auto-Tracking" />
             <Label text="Progress: ">
                <FlowPane.margin>
@@ -34,9 +30,6 @@
    </bottom>
    <top>
       <BorderPane BorderPane.alignment="CENTER">
-         <left>
-            <Button mnemonicParsing="false" onAction="#handleBrowse" text="Browse" BorderPane.alignment="CENTER" />
-         </left>
          <right>
             <TextField fx:id="textFieldCurFrameNum" editable="false" prefWidth="100.0" promptText="(frame #)" BorderPane.alignment="CENTER" />
          </right>

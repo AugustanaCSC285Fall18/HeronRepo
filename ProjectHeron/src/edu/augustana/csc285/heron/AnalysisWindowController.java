@@ -2,12 +2,7 @@ package edu.augustana.csc285.heron;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.opencv.core.Mat;
-import org.opencv.videoio.Videoio;
-
 import datamodel.AnimalTrack;
 import datamodel.ProjectData;
 import javafx.application.Platform;
@@ -43,6 +38,7 @@ public class AnalysisWindowController {
 	private int currentFrameRecord;
 	private ArrayList<Integer> currentFrameNum;
 	private Map<String, Integer> currentFrameRecordToChick;
+	private GraphicsContext gc;
 	
 	public void setProjectData(ProjectData project) {
 		currentFrameNum = new ArrayList<Integer>();
@@ -59,7 +55,7 @@ public class AnalysisWindowController {
 	public void initialize() {
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true); 
-		GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
+		gc = canvasOverVideo.getGraphicsContext2D();
 		
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
 			@Override 
@@ -67,15 +63,20 @@ public class AnalysisWindowController {
 				
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY) {
-					
-					if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime((int)((double)videoBar.getValue() / 100 * project.getVideo().getTotalNumFrames()))) {
-						project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
-						gc.setFill(Color.BLACK);
-						gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+					if(chickIDs.getValue() != null) {
+						if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
+							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
+							gc.setFill(Color.BLACK);
+							gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+						}
 					}
 					currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 				} else if (e.getButton() == MouseButton.SECONDARY) {
+					if(!project.getTracks().isEmpty()) {
+						project.getTracks().remove(project.getTracks().size()-1);
+					}
 					gc.clearRect(e.getX()-5, e.getY()-5, 20, 20);
+					
 				}
 			}
 		};
@@ -139,11 +140,10 @@ public class AnalysisWindowController {
 	@FXML
 	protected void showPath(ActionEvent event) {
 		if(paths.getValue() != null) {
-			GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 			gc.setFill(Color.RED);
 			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
 			for(datamodel.TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
-				gc.fillOval(point.getX(), point.getY(), 10, 10);
+				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(), point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);
 			}
 		}
 	}

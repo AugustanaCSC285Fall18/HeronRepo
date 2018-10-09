@@ -1,12 +1,10 @@
 package edu.augustana.csc285.heron;
 
-import java.io.File;
+
 import java.io.IOException;
-
 import org.opencv.core.Mat;
-import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
-
+import datamodel.ProjectData;
 import datamodel.Video;
 import edu.augustana.csc285.heron.Utils;
 import javafx.application.Platform;
@@ -18,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 /**
@@ -33,29 +30,50 @@ public class TimeWindowController {
 	@FXML private Button endBtn;
 	@FXML private Button nextBtn;
 	@FXML private ImageView videoView;
-	private Video vid;
+	private ProjectData project;
 	/**
 	 * This method sets the start time of the video
 	 */
 	@FXML
 	public void selectStartTime() {
-		vid.setStartFrameNum((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		project.getVideo().setStartFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
 	}
 	
+	public boolean allSelected() {
+		int emptyFrame = project.getVideo().getEmptyFrameNum();
+		int startFrameNum = project.getVideo().getStartFrameNum();
+		int endFrameNum = project.getVideo().getEndFrameNum();
+		return startFrameNum != -1 && endFrameNum != -1 && startFrameNum < endFrameNum; //&& emptyFrame != -1;
+	}
+	
+	@FXML
+	public void selectEmptyFrame() {
+		project.getVideo().setEmptyFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
+	}
 	/**
 	 * This method sets the end time of the video
 	 */
 	@FXML
 	public void selectEndTime() {
-		vid.setEndFrameNum((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		project.getVideo().setEndFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
 	}
 	/**
 	 * This loads the video so that the user can select the start and end time
 	 * while being able to see where in the video the value is based on the slider
 	 * @param video -the video that will be played
 	 */
-	public void setVideo(Video video) {
-		vid = video;		
+	public void setProjectData(ProjectData project) {
+		this.project = project;
+		Video vid = project.getVideo();		
 		if (vid.getFilePath() != null) {
 			try {
 				// start the video capture
@@ -99,7 +117,7 @@ public class TimeWindowController {
 	}
 	@FXML
 	public void initialize() {
-		
+		nextBtn.setDisable(true);
 	}
 	/**
 	 * This method allows the TimeWindow to go the MainWindow
@@ -107,22 +125,22 @@ public class TimeWindowController {
 	 */
 	@FXML
 	public void handleNext() throws IOException {
-		if(vid.getStartFrameNum() < vid.getEndFrameNum()) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("AutoTrackWindow.fxml"));
 		BorderPane root = (BorderPane)loader.load();
 		AutoTrackWindowController autoTrackController = loader.getController();
-		autoTrackController.setProjectData(vid);
+		autoTrackController.setProjectData(project);
 		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
 		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		Stage primary = (Stage) nextBtn.getScene().getWindow();
 		primary.setScene(timeScene);
-		}
+	
 	}
 	@FXML
 	public void wholeVideo() {
-		vid.setStartFrameNum(0);
-		vid.setEndFrameNum((int)(vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
+		project.getVideo().setStartFrameNum(0);
+		project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
+		nextBtn.setDisable(false);
 	}
 	
 }
