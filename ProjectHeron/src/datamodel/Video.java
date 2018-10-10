@@ -17,7 +17,7 @@ public class Video {
 	private int startFrameNum;
 	private int endFrameNum;
 	private Rectangle trackArea;
-	
+	private ProjectData project;
 	public Video(String filePath) throws FileNotFoundException {
 		this.filePath = filePath;
 		this.videoCap = new VideoCapture(filePath);
@@ -125,6 +125,14 @@ public class Video {
 	public void setArenaBounds(Rectangle trackArea) {
 		this.trackArea = trackArea;
 	}
+	
+	public int getWidth() {
+		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
+	}
+	public int getHeight() {
+		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
+	}
+	
 	public Mat grabFrame() {
 		// init everything
 		Mat frame = new Mat();
