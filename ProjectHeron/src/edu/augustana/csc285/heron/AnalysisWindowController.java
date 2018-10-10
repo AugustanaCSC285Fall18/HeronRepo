@@ -65,17 +65,16 @@ public class AnalysisWindowController {
 			@Override 
 			public void handle(MouseEvent e) {
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
-				if (e.getButton() == MouseButton.PRIMARY) {
-					
-					if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime((int)((double)videoBar.getValue() / 100 * project.getVideo().getTotalNumFrames()))) {
-						project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
+				if (e.getButton() == MouseButton.PRIMARY && !exist(currentFrameNum, project.getVideo().getCurrentFrameNum())) {
 						gc.setFill(Color.BLACK);
-						gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
-					}
-					currentFrameNum.add(project.getVideo().getCurrentFrameNum());
+						gc.fillOval(e.getX()-6, e.getY()-6, 12, 12);
+						gc.setFill(Color.RED);
+						gc.fillOval(e.getX()-3, e.getY()-3, 6, 6);
 				} else if (e.getButton() == MouseButton.SECONDARY) {
-					gc.clearRect(e.getX()-5, e.getY()-5, 25, 25);
+					gc.clearRect(e.getX()-8, e.getY()-8, 16, 16);
+					
 				}
+				currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 			}
 		};
 		canvasOverVideo.setOnMouseClicked(eventHandler);
@@ -98,7 +97,7 @@ public class AnalysisWindowController {
 					@Override
 					// this method sets the frame of videoView
 					public void run() {
-						showFrameAt((int)(newValue.doubleValue() / 100 * project.getVideo().getTotalNumFrames()));
+						showFrameAt((int)(newValue.doubleValue() / 100 * (project.getVideo().getTotalNumFrames()-1)));
 					}
 
 				});
@@ -146,6 +145,7 @@ public class AnalysisWindowController {
 			}
 		}
 	}
+	
 	public boolean exist(ArrayList<Integer> list, int num) {
 		for(int i = 0; i < list.size(); i++) {
 			if(list.get(i) == num) {
