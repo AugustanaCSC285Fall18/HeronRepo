@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import datamodel.AnimalTrack;
 import datamodel.ProjectData;
+import datamodel.TimePoint;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,6 +30,7 @@ public class AnalysisWindowController {
 	@FXML private Button confirmBtn;
 	@FXML private Button setBtn;
 	@FXML private Button showBtn;
+	@FXML private Button showTrack;
 	@FXML private TextField chickID;
 	@FXML private Canvas canvasOverVideo;
 	@FXML private ChoiceBox<String> chickIDs;
@@ -36,7 +38,9 @@ public class AnalysisWindowController {
 	@FXML private ImageView imageView;
 	@FXML private Slider videoBar;
 	private int currentFrameRecord;
+	private int colorNum;
 	private ArrayList<Integer> currentFrameNum;
+	private ArrayList<Color> colorChoice;
 	private Map<String, Integer> currentFrameRecordToChick;
 	private GraphicsContext gc;
 	
@@ -56,6 +60,12 @@ public class AnalysisWindowController {
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true); 
 		gc = canvasOverVideo.getGraphicsContext2D();
+		colorChoice = new ArrayList <Color>();
+		colorChoice.add(Color.BLACK);
+		colorChoice.add(Color.RED);
+		colorChoice.add(Color.GREEN);
+		colorChoice.add(Color.YELLOW);
+		colorChoice.add(Color.BLUE);
 		
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
 			@Override 
@@ -65,7 +75,7 @@ public class AnalysisWindowController {
 					if(chickIDs.getValue() != null) {
 						if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
 							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
-							gc.setFill(Color.BLACK);
+							gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
 							gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
 						}
 					}
@@ -120,6 +130,8 @@ public class AnalysisWindowController {
 	protected void confirmChick(ActionEvent event) {
 		chickIDs.getItems().add(chickID.getText());
 		project.getTracks().add(new AnimalTrack(chickID.getText()));
+		project.getAnimalTrackInTracks(chickID.getText()).setColor(colorChoice.get(colorNum%colorChoice.size()));
+		colorNum++;
 		currentFrameRecordToChick.put(chickID.getText(), currentFrameRecord);
 		chickID.clear();
 		chickID.setEditable(false);
@@ -128,8 +140,11 @@ public class AnalysisWindowController {
 	
 	@FXML
 	protected void setPathtoChick(ActionEvent event) {
-		if(chickIDs.getValue() != null) {
-	
+		if(chickIDs.getValue() != null && paths.getValue() != null) {
+			AnimalTrack chosenChick = project.getAnimalTrackInTracks(chickIDs.getValue());
+			for (TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
+				chosenChick.add(point);
+			}
 		}
 	}
 	public void showFrameAt(int frameNum) {
@@ -148,6 +163,16 @@ public class AnalysisWindowController {
 		}
 	}
 	
+	public void showFullTrack(ActionEvent event) {
+		if (chickIDs.getValue() != null) {
+			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
+			gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
+			for(datamodel.TimePoint point : project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory()) {
+				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(), point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);
+			}
+		}
+	}
+	
 	public boolean exist(ArrayList<Integer> list, int num) {
 		for(int i = 0; i < list.size(); i++) {
 			if(list.get(i) == num) {
@@ -156,4 +181,5 @@ public class AnalysisWindowController {
 		}
 		return false;
 	}
+	
 }

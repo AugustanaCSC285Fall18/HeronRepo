@@ -2,6 +2,8 @@ package datamodel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.scene.paint.Color;
 /**
  * Description: This class is to track a particular animal
  * 
@@ -13,6 +15,7 @@ public class AnimalTrack {
 	
 	private List<TimePoint> positionHistory;
 	private String animalID;
+	private Color color;
 	
 	/**
 	 * This constructs the AnimalTrack given the ID of the animal
@@ -94,4 +97,11 @@ public class AnimalTrack {
 		return positionHistory;
 	}
 	
+	public Color getColor() {
+		return this.color;
+	}
+	
+	public void setColor(Color newColor) {
+		color = newColor;
+	}
 }
