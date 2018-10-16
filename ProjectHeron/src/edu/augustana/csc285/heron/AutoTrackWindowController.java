@@ -21,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -148,9 +149,9 @@ public class AutoTrackWindowController implements AutoTrackListener {
 			progressAutoTrack.setProgress(1.0);
 			btnAutotrack.setText("Start auto-tracking");
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("AnalysisWindow.fxml"));
-			AnchorPane root = null;
+			BorderPane root = null;
 			try {
-				root = (AnchorPane)loader.load();
+				root = (BorderPane)loader.load();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -8,25 +8,34 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
-   <children>
-      <AnchorPane layoutX="-1.0" layoutY="-10.0" prefHeight="442.0" prefWidth="564.0">
+<BorderPane fx:id="analysisWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
+   <bottom>
+      <AnchorPane prefHeight="141.0" prefWidth="510.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="imageView" fitHeight="240.0" fitWidth="339.0" layoutX="101.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true" />
-            <ChoiceBox fx:id="chickIDs" layoutX="101.0" layoutY="324.0" prefWidth="150.0" />
-            <Button fx:id="confirmBtn" layoutX="440.0" layoutY="324.0" mnemonicParsing="false" onAction="#confirmChick" prefHeight="25.0" prefWidth="70.0" text="Confirm" />
-            <TextField fx:id="chickID" layoutX="370.0" layoutY="349.0" prefHeight="25.0" prefWidth="139.0" />
-            <Button fx:id="addChickBtn" layoutX="370.0" layoutY="324.0" mnemonicParsing="false" onAction="#addChick" text="Add Chick" />
-            <ChoiceBox fx:id="paths" layoutX="101.0" layoutY="349.0" prefWidth="150.0" />
-            <Button fx:id="setBtn" layoutX="101.0" layoutY="374.0" mnemonicParsing="false" onAction="#setPathtoChick" text="Set" />
-            <Slider fx:id="videoBar" layoutX="151.0" layoutY="299.0" prefHeight="14.0" prefWidth="240.0" />
-            <Label layoutX="50.0" layoutY="328.0" prefHeight="17.0" prefWidth="51.0" text="ChickID" />
-            <Label layoutX="50.0" layoutY="353.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
-            <Button fx:id="showBtn" layoutX="260.0" layoutY="349.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
-            <Canvas fx:id="canvasOverVideo" height="240.0" layoutX="101.0" layoutY="59.0" width="339.0" />
-            <Button fx:id="showTrack" layoutX="257.0" layoutY="324.0" mnemonicParsing="false" onAction="#showFullTrack" text="Show Chick Path" />
+            <ChoiceBox fx:id="chickIDs" layoutX="101.0" layoutY="40.0" prefWidth="150.0" />
+            <Button fx:id="confirmBtn" layoutX="425.0" layoutY="65.0" mnemonicParsing="false" onAction="#confirmChick" prefHeight="25.0" prefWidth="70.0" text="Confirm" />
+            <TextField fx:id="chickID" layoutX="356.0" layoutY="90.0" prefHeight="25.0" prefWidth="139.0" />
+            <Button fx:id="addChickBtn" layoutX="355.0" layoutY="65.0" mnemonicParsing="false" onAction="#addChick" text="Add Chick" />
+            <ChoiceBox fx:id="paths" layoutX="101.0" layoutY="65.0" prefWidth="150.0" />
+            <Button fx:id="setBtn" layoutX="101.0" layoutY="90.0" mnemonicParsing="false" onAction="#setPathtoChick" text="Set" />
+            <Slider fx:id="videoBar" layoutX="136.0" layoutY="14.0" prefHeight="14.0" prefWidth="240.0" />
+            <Label layoutX="50.0" layoutY="44.0" prefHeight="17.0" prefWidth="51.0" text="ChickID" />
+            <Label layoutX="50.0" layoutY="69.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
+            <Button fx:id="showBtn" layoutX="251.0" layoutY="65.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
+            <Button fx:id="showTrack" layoutX="251.0" layoutY="40.0" mnemonicParsing="false" onAction="#showFullTrack" text="Show Chick Path" />
          </children>
       </AnchorPane>
-   </children>
-</AnchorPane>
+   </bottom>
+   <center>
+      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Canvas fx:id="canvasOverVideo" height="200.0" width="322.0" />
+            <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="322.0" pickOnBounds="true" preserveRatio="true" />
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="199.0" prefWidth="310.0" />
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>
