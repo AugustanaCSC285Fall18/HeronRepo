@@ -1,9 +1,15 @@
 package edu.augustana.csc285.heron;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.Videoio;
 
 import datamodel.AnimalTrack;
@@ -42,12 +48,17 @@ public class AnalysisWindowController {
 	@FXML private ImageView imageView;
 	@FXML private Slider videoBar;
 	@FXML private BorderPane analysisWindow;
+	@FXML private Button mBack;
+	@FXML private Button mForward;
 	private int currentFrameRecord;
 	private int colorNum;
 	private ArrayList<Integer> currentFrameNum;
 	private ArrayList<Color> colorChoice;
 	private Map<String, Integer> currentFrameRecordToChick;
 	private GraphicsContext gc;
+	private ScheduledExecutorService timer;
+	private int [] timeTake = new int[] {1,5};
+	private int timeJump = 1;
 
 	public void setProjectData(ProjectData project) {
 		currentFrameNum = new ArrayList<Integer>();
@@ -84,7 +95,7 @@ public class AnalysisWindowController {
 				if (e.getButton() == MouseButton.PRIMARY) {
 					if(chickIDs.getValue() != null) {
 						if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
-							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX(), e.getY(), project.getVideo().getCurrentFrameNum());
+							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(), e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
 							gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
 							gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
 						}
@@ -157,11 +168,13 @@ public class AnalysisWindowController {
 			}
 		}
 	}
+
 	public void showFrameAt(int frameNum) {
 		project.getVideo().setCurrentFrameNum(frameNum);
 		Image curFrame = Utils.matToJavaFXImage(project.getVideo().readFrame());
 		imageView.setImage(curFrame);	
 	}
+
 	@FXML
 	protected void showPath(ActionEvent event) {
 		if(paths.getValue() != null) {
@@ -210,4 +223,51 @@ public class AnalysisWindowController {
 			analysisWindow.setPrefHeight(analysisWindow.getHeight()/2);
 		}
 	}
+
+	public void showNextFrame() {
+		Mat frame = new Mat();
+		project.getVideo().getVideoCap().read(frame);
+
+		MatOfByte buffer = new MatOfByte();
+		Imgcodecs.imencode(".png", frame, buffer);
+		Image imageToShow = new Image(new ByteArrayInputStream(buffer.toArray()));
+		Platform.runLater(new Runnable() {
+			@Override public void run() {
+				imageView.setImage(imageToShow);
+				videoBar.setValue(new ChangeListener<Number>() {
+					public void changed(ObservableValue ov, Number value, Number new_value) {
+						timeJump = timeTake[new_value.intValue()];
+					}
+				});
+			}
+		});
+	}
+
+	public void moveForward() throws InterruptedException {
+		if (timer != null && !timer.isShutdown()) {
+			timer.shutdown();  // stop the auto-playing
+			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
+		}
+		int newFrameNum = (int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) + timeJump * project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FPS));
+		if(project.getVideo().getEndFrameNum() >= newFrameNum){
+			project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
+			showNextFrame();
+		}
+
+	}
+
+	public void moveBack() throws InterruptedException {
+		if (timer != null && !timer.isShutdown()) {
+			timer.shutdown();  // stop the auto-playing
+			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
+		}
+
+		int newFrameNum = (int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FPS));
+		if(project.getVideo().getStartFrameNum() <= newFrameNum){
+			project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
+			showNextFrame();
+		}
+
+	}
+
 }
