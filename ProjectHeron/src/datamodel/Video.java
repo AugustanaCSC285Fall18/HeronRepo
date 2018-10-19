@@ -1,6 +1,6 @@
 package datamodel;
 
-import java.awt.Rectangle;
+import javafx.scene.shape.Rectangle;
 import java.io.FileNotFoundException;
 
 import org.opencv.core.Mat;
@@ -28,7 +28,7 @@ public class Video {
 		startFrameNum = -1;
 		int frameWidth = (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
 		int frameHeight = (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
-		trackArea = new Rectangle(0, 0, frameWidth, frameHeight);
+		trackArea = new Rectangle();
 	}
 	
 	public int getFrameWidth() {

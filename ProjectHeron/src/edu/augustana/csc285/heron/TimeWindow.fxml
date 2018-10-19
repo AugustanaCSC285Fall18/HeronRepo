@@ -14,14 +14,11 @@
       <Button fx:id="startBtn" layoutX="93.0" layoutY="251.0" mnemonicParsing="false" onAction="#selectStartTime" text="Start" />
       <Button fx:id="endBtn" layoutX="142.0" layoutY="251.0" mnemonicParsing="false" onAction="#selectEndTime" text="End" />
       <Button fx:id="nextBtn" layoutX="330.0" layoutY="276.0" mnemonicParsing="false" onAction="#handleNext" text="Next" />
-<<<<<<< HEAD
-      <Button fx:id="wholeBtn" layoutX="156.0" layoutY="251.0" mnemonicParsing="false" onAction="#wholeVideo" text="Whole Video" />
+
+      
       <Canvas fx:id="canvasOverVideo" height="171.0" layoutX="48.0" layoutY="21.0" width="301.0" />
       <Label layoutX="67.0" layoutY="6.0" prefHeight="17.0" prefWidth="263.0" text="Click To Choose New Center And Drag For Size " />
       <Label layoutX="34.0" layoutY="293.0" />
-=======
-      <Button fx:id="wholeBtn" layoutX="93.0" layoutY="276.0" mnemonicParsing="false" onAction="#wholeVideo" text="Whole Video" />
-      <Button fx:id="emptyFrameBtn" layoutX="218.0" layoutY="264.0" mnemonicParsing="false" onAction="#selectEmptyFrame" text="Empty Frame" />
->>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
+ 
    </children>
 </AnchorPane>
