@@ -9,23 +9,29 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="analysisWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
+<BorderPane fx:id="analysisWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.0" prefWidth="679.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
    <bottom>
       <AnchorPane prefHeight="141.0" prefWidth="510.0" BorderPane.alignment="CENTER">
          <children>
-            <ChoiceBox fx:id="chickIDs" layoutX="101.0" layoutY="40.0" prefWidth="150.0" />
-            <Button fx:id="confirmBtn" layoutX="425.0" layoutY="65.0" mnemonicParsing="false" onAction="#confirmChick" prefHeight="25.0" prefWidth="70.0" text="Confirm" />
-            <TextField fx:id="chickID" layoutX="356.0" layoutY="90.0" prefHeight="25.0" prefWidth="139.0" />
-            <Button fx:id="addChickBtn" layoutX="355.0" layoutY="65.0" mnemonicParsing="false" onAction="#addChick" text="Add Chick" />
-            <ChoiceBox fx:id="paths" layoutX="101.0" layoutY="65.0" prefWidth="150.0" />
-            <Button fx:id="setBtn" layoutX="101.0" layoutY="90.0" mnemonicParsing="false" onAction="#setPathtoChick" text="Set" />
-            <Slider fx:id="videoBar" layoutX="136.0" layoutY="14.0" prefHeight="14.0" prefWidth="240.0" />
-            <Label layoutX="50.0" layoutY="44.0" prefHeight="17.0" prefWidth="51.0" text="ChickID" />
-            <Label layoutX="50.0" layoutY="69.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
-            <Button fx:id="showBtn" layoutX="251.0" layoutY="65.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
-            <Button fx:id="showTrack" layoutX="251.0" layoutY="40.0" mnemonicParsing="false" onAction="#showFullTrack" text="Show Chick Path" />
+            <ChoiceBox fx:id="chickIDs" layoutX="196.0" layoutY="40.0" prefWidth="150.0" />
+            <Button fx:id="confirmBtn" layoutX="577.0" layoutY="28.0" mnemonicParsing="false" onAction="#confirmChick" prefHeight="25.0" prefWidth="70.0" text="Confirm" />
+            <TextField fx:id="chickID" layoutX="508.0" layoutY="53.0" prefHeight="25.0" prefWidth="139.0" />
+            <Button fx:id="addChickBtn" layoutX="507.0" layoutY="28.0" mnemonicParsing="false" onAction="#addChick" text="Add Chick" />
+            <ChoiceBox fx:id="paths" layoutX="196.0" layoutY="65.0" prefWidth="150.0" />
+            <Button fx:id="setBtn" layoutX="255.0" layoutY="90.0" mnemonicParsing="false" onAction="#setPathtoChick" text="Set" />
+            <Slider fx:id="videoBar" layoutX="220.0" layoutY="7.0" prefHeight="14.0" prefWidth="240.0" />
+            <Label layoutX="145.0" layoutY="44.0" prefHeight="17.0" prefWidth="51.0" text="ChickID" />
+            <Label layoutX="145.0" layoutY="69.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
+            <Button fx:id="showBtn" layoutX="346.0" layoutY="65.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
+            <Button fx:id="showTrack" layoutX="346.0" layoutY="40.0" mnemonicParsing="false" onAction="#showFullTrack" text="Show Chick Path" />
+            <Button layoutX="49.0" layoutY="16.0" mnemonicParsing="false" text="Return" />
+            <Button layoutX="56.0" layoutY="40.0" mnemonicParsing="false" text="Play" />
          </children>
       </AnchorPane>
    </bottom>
@@ -37,4 +43,51 @@
          </children>
       </StackPane>
    </center>
+   <top>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="76.0" />
+                  <Button fx:id="addIncrementBtn" mnemonicParsing="false" onAction="#addIncrement" text="Add Time Increment (Sec)" />
+                  <Button fx:id="confirmIncrementBtn" mnemonicParsing="false" onAction="#comfirmIncrement" text="Comfirm" />
+               </children>
+            </FlowPane>
+            <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="54.0" />
+                  <Label prefHeight="17.0" prefWidth="118.0" text="Time Increment (Sec)" />
+                  <ChoiceBox fx:id="timeChoices" prefHeight="25.0" prefWidth="65.0" />
+               </children>
+            </FlowPane>
+            <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="107.0" />
+                  <TextField fx:id="timeIncrement" prefHeight="25.0" prefWidth="124.0" />
+               </children>
+            </FlowPane>
+            <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="85.0" />
+                  <Button fx:id="incrementSetBtn" mnemonicParsing="false" onAction="#setIncrement" text="Set" />
+               </children>
+            </FlowPane>
+         </children>
+      </GridPane>
+   </top>
+   <left>
+      <Button fx:id="mBack" mnemonicParsing="false" onAction="#moveBack" text="&lt;&lt;" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Button fx:id="mForward" mnemonicParsing="false" onAction="#moveForward" text="&gt;&gt;" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>
