@@ -59,17 +59,13 @@ import javafx.util.Pair;
  * @update by Duc Pham 10/17/2018
  */
 public class TimeWindowController {
-
-	@FXML
-	private Slider videoBar;
-	@FXML
-	private Button startBtn;
-	@FXML
-	private Button endBtn;
-	@FXML
-	private Button nextBtn;
-	@FXML
-	private ImageView videoView;
+	@FXML private Slider videoBar;
+	@FXML private Button startBtn;
+	@FXML private Button endBtn;
+	@FXML private Button nextBtn;
+	@FXML private Button wholeBtn;
+	@FXML private Button emptyFrameBtn;
+	@FXML private ImageView videoView;
 	@FXML
 	private Canvas canvasOverVideo;
 	private Video vid;
@@ -88,6 +84,7 @@ public class TimeWindowController {
 			nextBtn.setDisable(false);
 		}
 	}
+
 	public boolean allSelected() {
 		int emptyFrame = project.getVideo().getEmptyFrameNum();
 		int startFrameNum = project.getVideo().getStartFrameNum();
@@ -103,6 +100,15 @@ public class TimeWindowController {
 		}
 	}
 
+	/**
+	 *  This method sets the whole video
+	 */
+	@FXML
+	public void wholeVideo() {
+		project.getVideo().setStartFrameNum(0);
+		project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT)-1));
+		nextBtn.setDisable(false);
+	}
 	/**
 	 * This method sets the end time of the video
 	 */
@@ -220,15 +226,10 @@ public class TimeWindowController {
 		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		Stage primary = (Stage) nextBtn.getScene().getWindow();
+		primary.setMinWidth(root.getPrefWidth()+10);
+		primary.setMinHeight(root.getPrefHeight()+20);
 		primary.setScene(timeScene);
 	
-	}
-
-	@FXML
-	public void wholeVideo() {
-
-		vid.setStartFrameNum(0);
-		vid.setEndFrameNum((int) (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT - 1)));
 	}
 
 	public double handleCaliberationWidth() {
@@ -295,4 +296,5 @@ public class TimeWindowController {
 		nextBtn.setDisable(false);
 
 	}
+
 }

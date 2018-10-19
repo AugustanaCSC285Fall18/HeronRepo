@@ -53,11 +53,13 @@ public class FileWindowController {
 		AnchorPane root = (AnchorPane)loader.load();
 		TimeWindowController timeController = loader.getController();
 		timeController.setProjectData(project);
-		
+
 		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
 		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		Stage primary = (Stage) NextBtn.getScene().getWindow();
+		primary.setMinWidth(root.getPrefWidth()+10);
+		primary.setMinHeight(root.getPrefHeight()+20);
 		primary.setScene(timeScene);
 	}
 }

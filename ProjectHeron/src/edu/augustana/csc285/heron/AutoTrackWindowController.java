@@ -162,6 +162,8 @@ public class AutoTrackWindowController implements AutoTrackListener {
 			timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
 			Stage primary = (Stage) btnAutotrack.getScene().getWindow();
+			primary.setMinWidth(root.getPrefWidth()+10);
+			primary.setMinHeight(root.getPrefHeight()+20);
 			primary.setScene(timeScene);
 		});	
 		
