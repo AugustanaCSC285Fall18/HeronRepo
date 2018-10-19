@@ -29,18 +29,11 @@ public class TimeWindowController {
 	@FXML private Button startBtn;
 	@FXML private Button endBtn;
 	@FXML private Button nextBtn;
+	@FXML private Button wholeBtn;
+	@FXML private Button emptyFrameBtn;
 	@FXML private ImageView videoView;
 	private ProjectData project;
-	/**
-	 * This method sets the start time of the video
-	 */
-	@FXML
-	public void selectStartTime() {
-		project.getVideo().setStartFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
-		if(allSelected()) {
-			nextBtn.setDisable(false);
-		}
-	}
+
 	
 	public boolean allSelected() {
 		int emptyFrame = project.getVideo().getEmptyFrameNum();
@@ -52,6 +45,25 @@ public class TimeWindowController {
 	@FXML
 	public void selectEmptyFrame() {
 		project.getVideo().setEmptyFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
+	}
+	/**
+	 *  This method sets the whole video
+	 */
+	@FXML
+	public void wholeVideo() {
+		project.getVideo().setStartFrameNum(0);
+		project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT)-1));
+		nextBtn.setDisable(false);
+	}
+	/**
+	 * This method sets the start time of the video
+	 */
+	@FXML
+	public void selectStartTime() {
+		project.getVideo().setStartFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 		if(allSelected()) {
 			nextBtn.setDisable(false);
 		}
@@ -119,6 +131,7 @@ public class TimeWindowController {
 	public void initialize() {
 		nextBtn.setDisable(true);
 	}
+	
 	/**
 	 * This method allows the TimeWindow to go the MainWindow
 	 * @throws IOException -if there is no pane to load, then the exception is thrown
@@ -133,14 +146,11 @@ public class TimeWindowController {
 		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		Stage primary = (Stage) nextBtn.getScene().getWindow();
+		primary.setMinWidth(root.getPrefWidth()+10);
+		primary.setMinHeight(root.getPrefHeight()+20);
 		primary.setScene(timeScene);
 	
 	}
-	@FXML
-	public void wholeVideo() {
-		project.getVideo().setStartFrameNum(0);
-		project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
-		nextBtn.setDisable(false);
-	}
+
 	
 }
