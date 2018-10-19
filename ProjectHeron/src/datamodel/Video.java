@@ -1,7 +1,6 @@
 package datamodel;
 
 import java.awt.Rectangle;
-import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.opencv.core.Mat;
@@ -24,10 +23,20 @@ public class Video {
 		if (!videoCap.isOpened()) {
 			throw new FileNotFoundException("Unable to open video file: " + filePath);
 		}
-		endFrameNum = this.getTotalNumFrames() - 1;
+		emptyFrameNum = -1;
+		endFrameNum = -1;
+		startFrameNum = -1;
 		int frameWidth = (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
 		int frameHeight = (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
 		trackArea = new Rectangle(0, 0, frameWidth, frameHeight);
+	}
+	
+	public int getFrameWidth() {
+		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
+	}
+	
+	public int getFrameHeight() {
+		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
 	}
 	
 	public double getFrameRate() {

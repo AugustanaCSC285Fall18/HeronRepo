@@ -1,14 +1,17 @@
 package edu.augustana.csc285.heron;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+=======
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 
+import java.io.IOException;
 import org.opencv.core.Mat;
-import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
-
+import datamodel.ProjectData;
 import datamodel.Video;
 import edu.augustana.csc285.heron.Utils;
 import javafx.application.Platform;
@@ -34,9 +37,12 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
+<<<<<<< HEAD
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+=======
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -53,6 +59,7 @@ import javafx.util.Pair;
  * @update by Duc Pham 10/17/2018
  */
 public class TimeWindowController {
+<<<<<<< HEAD
 	@FXML
 	private Slider videoBar;
 	@FXML
@@ -71,22 +78,60 @@ public class TimeWindowController {
 	private int getWidthLength;
 	private int getHeightLength;
 
+=======
+	@FXML private Slider videoBar;
+	@FXML private Button startBtn;
+	@FXML private Button endBtn;
+	@FXML private Button nextBtn;
+	@FXML private ImageView videoView;
+	private ProjectData project;
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 	/**
 	 * This method sets the start time of the video
 	 */
 	@FXML
 	public void selectStartTime() {
+<<<<<<< HEAD
 		vid.setStartFrameNum(
 				(int) (videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 	}
 
+=======
+		project.getVideo().setStartFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
+	}
+	
+	public boolean allSelected() {
+		int emptyFrame = project.getVideo().getEmptyFrameNum();
+		int startFrameNum = project.getVideo().getStartFrameNum();
+		int endFrameNum = project.getVideo().getEndFrameNum();
+		return startFrameNum != -1 && endFrameNum != -1 && startFrameNum < endFrameNum; //&& emptyFrame != -1;
+	}
+	
+	@FXML
+	public void selectEmptyFrame() {
+		project.getVideo().setEmptyFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
+	}
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 	/**
 	 * This method sets the end time of the video
 	 */
 	@FXML
 	public void selectEndTime() {
+<<<<<<< HEAD
 		vid.setEndFrameNum(
 				(int) (videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+=======
+		project.getVideo().setEndFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		if(allSelected()) {
+			nextBtn.setDisable(false);
+		}
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 	}
 
 	/**
@@ -95,8 +140,14 @@ public class TimeWindowController {
 	 * 
 	 * @param video -the video that will be played
 	 */
+<<<<<<< HEAD
 	public void setVideo(Video video) {
 		vid = video;
+=======
+	public void setProjectData(ProjectData project) {
+		this.project = project;
+		Video vid = project.getVideo();		
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 		if (vid.getFilePath() != null) {
 			try {
 				// start the video capture
@@ -142,6 +193,7 @@ public class TimeWindowController {
 
 	@FXML
 	public void initialize() {
+<<<<<<< HEAD
 		GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 		calibrationPoints = new ArrayList<>();
 		rectangle = new Rectangle();
@@ -175,6 +227,9 @@ public class TimeWindowController {
 			}
 		});
 
+=======
+		nextBtn.setDisable(true);
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 	}
 
 	/**
@@ -185,6 +240,7 @@ public class TimeWindowController {
 	 */
 	@FXML
 	public void handleNext() throws IOException {
+<<<<<<< HEAD
 		if (vid.getStartFrameNum() < vid.getEndFrameNum()) {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("AutoTrackWindow.fxml"));
 			BorderPane root = (BorderPane) loader.load();
@@ -198,10 +254,23 @@ public class TimeWindowController {
 			System.out.println(handleCaliberationWidth());
 			System.out.println(handleCaliberationHeight());
 		}
+=======
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("AutoTrackWindow.fxml"));
+		BorderPane root = (BorderPane)loader.load();
+		AutoTrackWindowController autoTrackController = loader.getController();
+		autoTrackController.setProjectData(project);
+		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
+		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		
+		Stage primary = (Stage) nextBtn.getScene().getWindow();
+		primary.setScene(timeScene);
+	
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 	}
 
 	@FXML
 	public void wholeVideo() {
+<<<<<<< HEAD
 		vid.setStartFrameNum(0);
 		vid.setEndFrameNum((int) (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT - 1)));
 	}
@@ -264,5 +333,10 @@ public class TimeWindowController {
 		getWidthLength = Integer.parseInt(widthLength.getText());
 		getHeightLength = Integer.parseInt(heightLength.getText());
 		;
+=======
+		project.getVideo().setStartFrameNum(0);
+		project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
+		nextBtn.setDisable(false);
+>>>>>>> 2f51b79607768ea89121902d4130b7d327ed7feb
 	}
 }

@@ -3,10 +3,7 @@ package edu.augustana.csc285.heron;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import org.opencv.videoio.VideoCapture;
-
-import datamodel.Video;
+import datamodel.ProjectData;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -24,10 +21,10 @@ import javafx.stage.Window;
 public class FileWindowController {
 	@FXML private Button BrowseBtn;
 	@FXML private Button NextBtn;
-	private Video vid;
+	private ProjectData project;
 	@FXML
 	public void initialize() {
-		
+		NextBtn.setDisable(true);
 	}
 	/**
 	 * This method allows the user to select a file that will be
@@ -40,7 +37,11 @@ public class FileWindowController {
 		fileChooser.setTitle("Open Image File");
 		Window mainWindow = BrowseBtn.getScene().getWindow();
 		File chosenFile = fileChooser.showOpenDialog(mainWindow);
-		vid = new Video(chosenFile.getAbsolutePath());
+		if(chosenFile != null) {
+			project = new ProjectData(chosenFile.getAbsolutePath());
+			NextBtn.setDisable(false);
+		}
+		
 	}
 	/**
 	 * This method allows the FileWindow to go to the TimeWindow
@@ -48,19 +49,15 @@ public class FileWindowController {
 	 */
 	@FXML
 	public void handleNext() throws IOException {
-		if(vid.getFilePath() != null) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("TimeWindow.fxml"));
 		AnchorPane root = (AnchorPane)loader.load();
 		TimeWindowController timeController = loader.getController();
-		timeController.setVideo(vid);
+		timeController.setProjectData(project);
 		
 		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
 		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		Stage primary = (Stage) NextBtn.getScene().getWindow();
 		primary.setScene(timeScene);
-		} else {
-			
-		}
 	}
 }
