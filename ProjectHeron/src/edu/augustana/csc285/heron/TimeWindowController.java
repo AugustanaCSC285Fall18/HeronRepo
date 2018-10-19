@@ -3,6 +3,7 @@ package edu.augustana.csc285.heron;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
@@ -16,11 +17,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -29,57 +38,73 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+
 /**
- * This class is the GUI for selecting the start and end time of what will be recorded
- * as data and for getting to the next GUI.
+ * This class is the GUI for selecting the start and end time of what will be
+ * recorded as data and for getting to the next GUI.
+ * 
  * @author Jinsoo Park && Ehren Braun
  * @date 9/27/2018
+ * @update by Duc Pham 10/17/2018
  */
 public class TimeWindowController {
-	@FXML private Slider videoBar;
-	@FXML private Button startBtn;
-	@FXML private Button endBtn;
-	@FXML private Button nextBtn;
-	@FXML private ImageView videoView;
-	@FXML private Canvas canvasOverVideo;
-	@FXML private TextField lengthOfLineText;
-
+	@FXML
+	private Slider videoBar;
+	@FXML
+	private Button startBtn;
+	@FXML
+	private Button endBtn;
+	@FXML
+	private Button nextBtn;
+	@FXML
+	private ImageView videoView;
+	@FXML
+	private Canvas canvasOverVideo;
 	private Video vid;
 	private ArrayList<Point2D> calibrationPoints;
-	
-	
+	private Rectangle rectangle;
+	private int getWidthLength;
+	private int getHeightLength;
+
 	/**
 	 * This method sets the start time of the video
 	 */
 	@FXML
 	public void selectStartTime() {
-		vid.setStartFrameNum((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		vid.setStartFrameNum(
+				(int) (videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 	}
-	
+
 	/**
 	 * This method sets the end time of the video
 	 */
 	@FXML
 	public void selectEndTime() {
-		vid.setEndFrameNum((int)(videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		vid.setEndFrameNum(
+				(int) (videoBar.getValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 	}
+
 	/**
-	 * This loads the video so that the user can select the start and end time
-	 * while being able to see where in the video the value is based on the slider
+	 * This loads the video so that the user can select the start and end time while
+	 * being able to see where in the video the value is based on the slider
+	 * 
 	 * @param video -the video that will be played
 	 */
 	public void setVideo(Video video) {
-		vid = video;		
+		vid = video;
 		if (vid.getFilePath() != null) {
 			try {
 				// start the video capture
 				vid.getVideoCap().open(vid.getFilePath());
-				
+
 				// sets the video capture to the start
 				vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, 0);
-				
+
 				// creates a listener for the videoBar
 				videoBar.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -87,15 +112,15 @@ public class TimeWindowController {
 					// this method changes the frame of video capture based on the videoBar
 					public void changed(ObservableValue<? extends Number> observable, Number oldValue,
 							Number newValue) {
-						
-						vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES,
-								(int) (newValue.doubleValue() / 1000 * (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+
+						vid.getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, (int) (newValue.doubleValue() / 1000
+								* (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
 						Platform.runLater(new Runnable() {
 
 							@Override
 							// this method sets the frame of videoView
 							public void run() {
-								Mat newFrame = vid.grabFrame();								
+								Mat newFrame = vid.grabFrame();
 								videoView.setImage(Utils.mat2Image(newFrame));
 
 							}
@@ -107,65 +132,137 @@ public class TimeWindowController {
 				// sets the frame of videoView to the start
 				Mat frame = vid.grabFrame();
 				videoView.setImage(Utils.mat2Image(frame));
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
+
 	@FXML
 	public void initialize() {
 		GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 		calibrationPoints = new ArrayList<>();
-		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() { 
-			@Override 
-			public void handle(MouseEvent e) {
-				
-				System.out.println("x: " + e.getX() + ", y: " + e.getY());
-				if (calibrationPoints.size() < 2 && e.getButton() == MouseButton.PRIMARY) {
-					gc.setFill(Color.RED);
-					gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
-					calibrationPoints.add(new Point2D(e.getX(),e.getY()));
-				};
-				if(calibrationPoints.size() == 2) {
-					gc.setLineWidth(3);
-					gc.setStroke(Color.RED);
-					gc.strokeLine(calibrationPoints.get(0).getX(), calibrationPoints.get(0).getY(), 
-							calibrationPoints.get(1).getX(), calibrationPoints.get(1).getY());
-				}
-				
-	}};
-	canvasOverVideo.setOnMouseClicked(eventHandler);
-		}
+		rectangle = new Rectangle();
+		canvasOverVideo.setOnMouseClicked(event -> {
+			gc.setStroke(Color.RED);
+			if (calibrationPoints.size() == 1) {
+				gc.fillOval(event.getX() - 3, event.getY() - 3, 6, 6);
+				calibrationPoints.add(new Point2D(event.getX(), event.getY()));
+			}
+		});
+		canvasOverVideo.setOnMousePressed(event -> {
+			calibrationPoints.add(new Point2D(event.getX(), event.getY()));
+			System.out.println("a");
+		});
+		canvasOverVideo.setOnMouseDragged(event -> {
+			rectangle.setWidth(Math.abs(event.getX() - calibrationPoints.get(calibrationPoints.size()-1).getX()));
+			rectangle.setHeight(Math.abs(event.getY() - calibrationPoints.get(calibrationPoints.size()-1).getY()));
+			rectangle.setX(Math.min(calibrationPoints.get(calibrationPoints.size()-1).getX(), event.getX()));
+			rectangle.setY(Math.min(calibrationPoints.get(calibrationPoints.size()-1).getY(), event.getY()));
+			gc.setStroke(Color.RED);
+			gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
+			gc.strokeRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+
+		});
+
+		canvasOverVideo.setOnMouseReleased(event -> {
+			// Do what you want with selection's properties here
+			System.out.println(rectangle.getX() + rectangle.getY() + rectangle.getWidth() + rectangle.getHeight());
+			if (rectangle.getHeight() != 0) {
+				createDialog();
+			}
+		});
+
+	}
+
 	/**
 	 * This method allows the TimeWindow to go the MainWindow
-	 * @throws IOException -if there is no pane to load, then the exception is thrown
+	 * 
+	 * @throws IOException -if there is no pane to load, then the exception is
+	 *                     thrown
 	 */
 	@FXML
 	public void handleNext() throws IOException {
-		if(vid.getStartFrameNum() < vid.getEndFrameNum()) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("AutoTrackWindow.fxml"));
-		BorderPane root = (BorderPane)loader.load();
-		AutoTrackWindowController autoTrackController = loader.getController();
-		autoTrackController.setProjectData(vid);
-		Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
-		timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		Stage primary = (Stage) nextBtn.getScene().getWindow();
-		primary.setScene(timeScene);
-		System.out.println(handleCaliberation());
+		if (vid.getStartFrameNum() < vid.getEndFrameNum()) {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("AutoTrackWindow.fxml"));
+			BorderPane root = (BorderPane) loader.load();
+			AutoTrackWindowController autoTrackController = loader.getController();
+			autoTrackController.setProjectData(vid);
+			Scene timeScene = new Scene(root, root.getPrefWidth(), root.getPrefHeight());
+			timeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+
+			Stage primary = (Stage) nextBtn.getScene().getWindow();
+			primary.setScene(timeScene);
+			System.out.println(handleCaliberationWidth());
+			System.out.println(handleCaliberationHeight());
 		}
 	}
+
 	@FXML
 	public void wholeVideo() {
 		vid.setStartFrameNum(0);
-		vid.setEndFrameNum((int)(vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
+		vid.setEndFrameNum((int) (vid.getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT - 1)));
 	}
-	
-	public double handleCaliberation() {
-		double ratioBetImaAndRel = Math.max(vid.getWidth()/videoView.getFitWidth(),vid.getHeight()/videoView.getFitHeight());
-		double screenDistance = calibrationPoints.get(0).distance(calibrationPoints.get(1));		
-		return Double.parseDouble(lengthOfLineText.getText()) / screenDistance *ratioBetImaAndRel;
+
+	public double handleCaliberationWidth() {
+		return getWidthLength * 1.0 / rectangle.getWidth();
+	}
+
+	public double handleCaliberationHeight() {
+		return getHeightLength * 1.0 / rectangle.getHeight();
+	}
+
+	public void createDialog() {
+		// Create the custom dialog.
+		Dialog<Pair<String, String>> dialog = new Dialog<>();
+		dialog.setTitle("Ratio Dialog");
+		dialog.setHeaderText("This Dialog is For Ratio");
+
+		// Set the button types.
+		ButtonType accpetButtonType = new ButtonType("Accept", ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(accpetButtonType, ButtonType.CANCEL);
+
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+
+		TextField widthLength = new TextField();
+		widthLength.setPromptText("Width Length in centimeter.");
+		TextField heightLength = new TextField();
+		heightLength.setPromptText("Height Length in centimeter.");
+
+		grid.add(new Label("Width Length:"), 0, 0);
+		grid.add(widthLength, 1, 0);
+		grid.add(new Label("Height Length:"), 0, 1);
+		grid.add(heightLength, 1, 1);
+
+		// Enable/Disable
+		Node accpetButton = dialog.getDialogPane().lookupButton(accpetButtonType);
+		accpetButton.setDisable(true);
+
+		// Do some validation (using the Java 8 lambda syntax).
+		widthLength.textProperty().addListener((observable, oldValue, newValue) -> {
+			accpetButton.setDisable(newValue.trim().isEmpty());
+		});
+
+		dialog.getDialogPane().setContent(grid);
+
+		// Request focus
+		Platform.runLater(() -> widthLength.requestFocus());
+
+		// Convert the result
+		dialog.setResultConverter(dialogButton -> {
+			if (dialogButton == accpetButtonType) {
+				return new Pair<>(widthLength.getText(), heightLength.getText());
+			}
+			return null;
+		});
+		Optional<Pair<String, String>> result = dialog.showAndWait();
+		getWidthLength = Integer.parseInt(widthLength.getText());
+		getHeightLength = Integer.parseInt(heightLength.getText());
+		;
 	}
 }
