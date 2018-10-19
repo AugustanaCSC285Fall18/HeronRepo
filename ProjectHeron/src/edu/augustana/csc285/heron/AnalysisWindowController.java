@@ -3,6 +3,7 @@ package edu.augustana.csc285.heron;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +41,6 @@ public class AnalysisWindowController {
 	@FXML private Button confirmBtn;
 	@FXML private Button setBtn;
 	@FXML private Button showBtn;
-	@FXML private Button showTrack;
 	@FXML private TextField chickID;
 	@FXML private Canvas canvasOverVideo;
 	@FXML private ChoiceBox<String> chickIDs;
@@ -50,33 +50,44 @@ public class AnalysisWindowController {
 	@FXML private BorderPane analysisWindow;
 	@FXML private Button mBack;
 	@FXML private Button mForward;
-	private int currentFrameRecord;
-	private int colorNum;
-	private ArrayList<Integer> currentFrameNum;
-	private ArrayList<Color> colorChoice;
-	private Map<String, Integer> currentFrameRecordToChick;
+	@FXML private Button incrementSetBtn;
+	@FXML private Button addIncrementBtn;
+	@FXML private Button confirmIncrementBtn;
+	@FXML private ChoiceBox<Double> timeChoices;
+	@FXML private TextField timeIncrement;
 	private GraphicsContext gc;
+	private List<Color> colorChoice;
+	private int colorNum;
 	private ScheduledExecutorService timer;
-	private int [] timeTake = new int[] {1,5};
-	private int timeJump = 1;
+	private double timeJump;
+
 
 	public void setProjectData(ProjectData project) {
-		currentFrameNum = new ArrayList<Integer>();
 		this.project = project;
 		fitVideo();
+		videoBar.setMax(project.getVideo().getTotalNumFrames() - 1);
+		videoBar.setValue(project.getVideo().getStartFrameNum());
+		List<String> remove = new ArrayList<String>();
 		for(datamodel.AnimalTrack animal : project.getUnassignedSegments()) {
-			paths.getItems().add(animal.getAnimalID());
+			if(animal.size() < 66) {
+				remove.add(animal.getAnimalID());
+			} else {
+				paths.getItems().add(animal.getAnimalID());
+			}
 		}
-		showFrameAt(project.getVideo().getStartFrameNum());
-		currentFrameRecord = project.getVideo().getStartFrameNum();
-		currentFrameRecordToChick = new HashMap<String, Integer>();
+		for(String id : remove) {
+			project.getUnassignedSegments().remove(project.getAnimalTrackInUnassignedSegments(id));
+		}
 	}
 
 	@FXML
 	public void initialize() {
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true); 
+		timeIncrement.setEditable(false);
+		confirmIncrementBtn.setDisable(true);
 		gc = canvasOverVideo.getGraphicsContext2D();
+
 		colorChoice = new ArrayList <Color>();
 		colorChoice.add(Color.BLACK);
 		colorChoice.add(Color.RED);
@@ -91,16 +102,18 @@ public class AnalysisWindowController {
 		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
 			@Override 
 			public void handle(MouseEvent e) {
+				
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY) {
-					if(chickIDs.getValue() != null) {
+					if(chickIDs.getValue() != null && project.getVideo().getCurrentFrameNum() >= project.getVideo().getStartFrameNum() && 
+							project.getVideo().getCurrentFrameNum() <= project.getVideo().getEndFrameNum()) {
 						if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
-							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(), e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
+							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
+									e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
 							gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
 							gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
 						}
 					}
-					currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 				} else if (e.getButton() == MouseButton.SECONDARY) {
 					if(!project.getTracks().isEmpty()) {
 						project.getTracks().remove(project.getTracks().size()-1);
@@ -108,7 +121,6 @@ public class AnalysisWindowController {
 					gc.clearRect(e.getX()-5, e.getY()-5, 20, 20);
 
 				}
-				currentFrameNum.add(project.getVideo().getCurrentFrameNum());
 			}
 		};
 		canvasOverVideo.setOnMouseClicked(eventHandler);
@@ -116,6 +128,8 @@ public class AnalysisWindowController {
 		chickIDs.setItems(items);
 		ObservableList<String> pathList = FXCollections.observableArrayList();
 		paths.setItems(pathList);
+		ObservableList<Double> incrementValues = FXCollections.observableArrayList();
+		timeChoices.setItems(incrementValues);
 
 		//videoBar.valueProperty().addListener((obs, oldV, newV) -> showFrameAt(newV.intValue()));
 		videoBar.valueProperty().addListener(new ChangeListener<Number>() {
@@ -131,7 +145,7 @@ public class AnalysisWindowController {
 					@Override
 					// this method sets the frame of videoView
 					public void run() {
-						showFrameAt((int)(newValue.doubleValue() / 100 * (project.getVideo().getTotalNumFrames()-1)));
+						showFrameAt((int) newValue.doubleValue());
 					}
 
 				});
@@ -151,9 +165,8 @@ public class AnalysisWindowController {
 	protected void confirmChick(ActionEvent event) {
 		chickIDs.getItems().add(chickID.getText());
 		project.getTracks().add(new AnimalTrack(chickID.getText()));
-		project.getAnimalTrackInTracks(chickID.getText()).setColor(colorChoice.get(colorNum%colorChoice.size()));
+		project.getAnimalTrackInTracks(chickID.getText()).setColor(colorChoice.get(colorNum % colorChoice.size()));
 		colorNum++;
-		currentFrameRecordToChick.put(chickID.getText(), currentFrameRecord);
 		chickID.clear();
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true);
@@ -162,9 +175,13 @@ public class AnalysisWindowController {
 	@FXML
 	protected void setPathtoChick(ActionEvent event) {
 		if(chickIDs.getValue() != null && paths.getValue() != null) {
-			AnimalTrack chosenChick = project.getAnimalTrackInTracks(chickIDs.getValue());
-			for (TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
-				chosenChick.add(point);
+			if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getAtFrameRecorded())) {
+				AnimalTrack chosenChick = project.getAnimalTrackInTracks(chickIDs.getValue());
+				for(TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
+					chosenChick.add(point);
+				}
+				project.getUnassignedSegments().remove(project.getAnimalTrackInUnassignedSegments(paths.getValue()));
+				paths.getItems().remove(paths.getValue());
 			}
 		}
 	}
@@ -178,10 +195,12 @@ public class AnalysisWindowController {
 	@FXML
 	protected void showPath(ActionEvent event) {
 		if(paths.getValue() != null) {
+			System.out.println(paths.getValue());
 			gc.setFill(Color.RED);
 			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
 			for(datamodel.TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
-				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(), point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);
+				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(),
+						point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);
 			}
 		}
 	}
@@ -191,83 +210,83 @@ public class AnalysisWindowController {
 			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
 			gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
 			for(datamodel.TimePoint point : project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory()) {
-				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(), point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);
+				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(),
+						point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);
 			}
 		}
 	}
-
-	public boolean exist(ArrayList<Integer> list, int num) {
-		for(int i = 0; i < list.size(); i++) {
-			if(list.get(i) == num) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-
 	public void fitVideo() {
 		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
 		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
 		if (prefWidth > imageView.getFitWidth() || prefHeight > imageView.getFitHeight()) {
-			canvasOverVideo.setWidth(prefWidth/2);
-			canvasOverVideo.setHeight(prefHeight/2);
-			imageView.setFitWidth(prefWidth/2);
-			imageView.setFitHeight(prefHeight/2);
+			canvasOverVideo.setWidth(prefWidth/1.75);
+			canvasOverVideo.setHeight(prefHeight/1.75);
+			imageView.setFitWidth(prefWidth/1.75);
+			imageView.setFitHeight(prefHeight/1.75);
 		} else {
 			canvasOverVideo.setWidth(prefWidth);
 			canvasOverVideo.setHeight(prefHeight);
 			imageView.setFitWidth(prefWidth);
 			imageView.setFitHeight(prefHeight);
-			analysisWindow.setPrefWidth(analysisWindow.getWidth()/2);
-			analysisWindow.setPrefHeight(analysisWindow.getHeight()/2);
+//			analysisWindow.setPrefWidth(analysisWindow.getWidth());
+//			analysisWindow.setPrefHeight(analysisWindow.getHeight());
 		}
 	}
-
-	public void showNextFrame() {
-		Mat frame = new Mat();
-		project.getVideo().getVideoCap().read(frame);
-
-		MatOfByte buffer = new MatOfByte();
-		Imgcodecs.imencode(".png", frame, buffer);
-		Image imageToShow = new Image(new ByteArrayInputStream(buffer.toArray()));
-		Platform.runLater(new Runnable() {
-			@Override public void run() {
-				imageView.setImage(imageToShow);
-				videoBar.setValue(new ChangeListener<Number>() {
-					public void changed(ObservableValue ov, Number value, Number new_value) {
-						timeJump = timeTake[new_value.intValue()];
-					}
-				});
-			}
-		});
+	
+	@FXML
+	public void setIncrement() {
+		timeJump = timeChoices.getValue();
+		mForward.setText(">> " + timeJump);
+		mBack.setText(timeJump + " <<");
+	}
+	
+	@FXML
+	public void comfirmIncrement() {
+		try {
+			timeChoices.getItems().add(Double.parseDouble(timeIncrement.getText()));
+			timeIncrement.clear();
+			timeIncrement.setEditable(false);
+			confirmIncrementBtn.setDisable(true);
+		} catch (NumberFormatException e) {
+			timeIncrement.clear();
+			timeIncrement.setPromptText("Not a Number");
+		} catch (NullPointerException e) {
+			timeIncrement.clear();
+			timeIncrement.setPromptText("No Value");
+		}
+	}
+	
+	@FXML
+	public void addIncrement() {
+		confirmIncrementBtn.setDisable(false);
+		timeIncrement.setEditable(true);
 	}
 
+	@FXML
 	public void moveForward() throws InterruptedException {
 		if (timer != null && !timer.isShutdown()) {
 			timer.shutdown();  // stop the auto-playing
 			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
-		int newFrameNum = (int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) + timeJump * project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FPS));
-		if(project.getVideo().getEndFrameNum() >= newFrameNum){
-			project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
-			showNextFrame();
+		if(project.allHaveTimePoint(project.getVideo().getCurrentFrameNum()) || project.getVideo().getCurrentFrameNum() < project.getVideo().getStartFrameNum()) {
+			int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() + timeJump * project.getVideo().getFrameRate());
+			if(project.getVideo().getEndFrameNum() >= newFrameNum){
+				videoBar.setValue((double)newFrameNum);
+			}
 		}
 
 	}
 
+	@FXML
 	public void moveBack() throws InterruptedException {
 		if (timer != null && !timer.isShutdown()) {
 			timer.shutdown();  // stop the auto-playing
 			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
 
-		int newFrameNum = (int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_POS_FRAMES) - timeJump * project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FPS));
+		int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() - timeJump * project.getVideo().getFrameRate());
 		if(project.getVideo().getStartFrameNum() <= newFrameNum){
-			project.getVideo().getVideoCap().set(Videoio.CAP_PROP_POS_FRAMES, newFrameNum);
-			showNextFrame();
+			videoBar.setValue((double)newFrameNum);
 		}
-
 	}
-
 }
