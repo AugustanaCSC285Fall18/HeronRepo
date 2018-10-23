@@ -142,6 +142,13 @@ public class Video {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
 	}
 	
+	synchronized void connectVideoCapture() throws FileNotFoundException {
+		this.videoCap = new VideoCapture(filePath);
+		if (!videoCap.isOpened()) {
+			throw new FileNotFoundException("Unable to open video file: " + filePath);
+		}
+	}
+	
 	public Mat grabFrame() {
 		// init everything
 		Mat frame = new Mat();

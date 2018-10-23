@@ -41,6 +41,7 @@ public class AnalysisWindowController {
 	@FXML private Button confirmBtn;
 	@FXML private Button setBtn;
 	@FXML private Button showBtn;
+	@FXML private Button saveBtn;
 	@FXML private TextField chickID;
 	@FXML private Canvas canvasOverVideo;
 	@FXML private ChoiceBox<String> chickIDs;
@@ -288,5 +289,10 @@ public class AnalysisWindowController {
 		if(project.getVideo().getStartFrameNum() <= newFrameNum){
 			videoBar.setValue((double)newFrameNum);
 		}
+	}
+	
+	@FXML
+	public void saveProjectData() {
+		
 	}
 }

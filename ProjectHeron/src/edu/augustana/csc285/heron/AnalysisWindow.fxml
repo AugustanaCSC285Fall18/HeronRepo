@@ -32,6 +32,7 @@
             <Button fx:id="showTrack" layoutX="346.0" layoutY="40.0" mnemonicParsing="false" onAction="#showFullTrack" text="Show Chick Path" />
             <Button layoutX="49.0" layoutY="16.0" mnemonicParsing="false" text="Return" />
             <Button layoutX="56.0" layoutY="40.0" mnemonicParsing="false" text="Play" />
+            <Button fx:id="saveBtn" layoutX="595.0" layoutY="90.0" mnemonicParsing="false" onAction="#saveProjectData" text="Save" />
          </children>
       </AnchorPane>
    </bottom>
