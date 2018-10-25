@@ -203,17 +203,20 @@ public class TimeWindowController {
 			calibrationPoints.add(new Point2D(event.getX(), event.getY()));
 		});
 		canvasOverVideo.setOnMouseDragged(event -> {
-			Point2D startPoint = calibrationPoints.get(calibrationPoints.size()-1);		
-			double minX = Math.min(startPoint.getX(), event.getX());
-			double minY = Math.min(startPoint.getY(), event.getY());
-			double width = Math.abs(event.getX() - startPoint.getX());
-			double height = Math.abs(event.getY() - startPoint.getY());
-			Rectangle2D arenaRect = new Rectangle2D(minX,minY,minX+width,minY+height); 
+			Point2D startPointCanvas = calibrationPoints.get(calibrationPoints.size()-1);		
+			double minXCanvas = Math.min(startPointCanvas.getX(), event.getX());
+			double minYCanvas = Math.min(startPointCanvas.getY(), event.getY());
+			double widthCanvas = Math.abs(event.getX() - startPointCanvas.getX());
+			double heightCanvas = Math.abs(event.getY() - startPointCanvas.getY());
+			
+			double ratio = Math.max(canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(),canvasOverVideo.getHeight() / project.getVideo().getFrameHeight());
+			Rectangle2D arenaRect = new Rectangle2D(minXCanvas*ratio,minYCanvas*ratio,(minXCanvas+widthCanvas)*ratio,(minYCanvas+heightCanvas)*ratio); 
+			
 			project.getVideo().setArenaBounds(arenaRect);
 			
 			gc.setStroke(Color.RED);
 			gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
-			gc.strokeRect(arenaRect.getMinX(), arenaRect.getMinY(), arenaRect.getWidth(), arenaRect.getHeight());
+			gc.strokeRect(minXCanvas, minYCanvas, widthCanvas, heightCanvas);
 
 		});
 
