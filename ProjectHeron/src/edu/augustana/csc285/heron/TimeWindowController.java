@@ -204,8 +204,6 @@ public class TimeWindowController {
 				createDialog();
 			}
 		});
-
-
 		nextBtn.setDisable(true);
 
 	}
@@ -287,14 +285,13 @@ public class TimeWindowController {
 			return null;
 		});
 		Optional<Pair<String, String>> result = dialog.showAndWait();
-		getWidthLength = Integer.parseInt(widthLength.getText());
-		getHeightLength = Integer.parseInt(heightLength.getText());
-		;
-
-		project.getVideo().setStartFrameNum(0);
-		project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
-		nextBtn.setDisable(false);
-
+		if (result.isPresent()) {
+			getWidthLength = Integer.parseInt(widthLength.getText());
+			getHeightLength = Integer.parseInt(heightLength.getText());
+			project.getVideo().setStartFrameNum(0);
+			project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
+		//	nextBtn.setDisable(false);
+		}
 	}
 
 }
