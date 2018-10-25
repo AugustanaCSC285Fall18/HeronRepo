@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -202,19 +203,23 @@ public class TimeWindowController {
 			calibrationPoints.add(new Point2D(event.getX(), event.getY()));
 		});
 		canvasOverVideo.setOnMouseDragged(event -> {
-			project.getVideo().getArenaBounds().setWidth(Math.abs(event.getX() - calibrationPoints.get(calibrationPoints.size()-1).getX()));
-			project.getVideo().getArenaBounds().setHeight(Math.abs(event.getY() - calibrationPoints.get(calibrationPoints.size()-1).getY()));
-			project.getVideo().getArenaBounds().setX(Math.min(calibrationPoints.get(calibrationPoints.size()-1).getX(), event.getX()));
-			project.getVideo().getArenaBounds().setY(Math.min(calibrationPoints.get(calibrationPoints.size()-1).getY(), event.getY()));
+			Point2D startPoint = calibrationPoints.get(calibrationPoints.size()-1);		
+			double minX = Math.min(startPoint.getX(), event.getX());
+			double minY = Math.min(startPoint.getY(), event.getY());
+			double width = Math.abs(event.getX() - startPoint.getX());
+			double height = Math.abs(event.getY() - startPoint.getY());
+			Rectangle2D arenaRect = new Rectangle2D(minX,minY,minX+width,minY+height); 
+			project.getVideo().setArenaBounds(arenaRect);
+			
 			gc.setStroke(Color.RED);
 			gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
-			gc.strokeRect(project.getVideo().getArenaBounds().getX(), project.getVideo().getArenaBounds().getY(), project.getVideo().getArenaBounds().getWidth(), project.getVideo().getArenaBounds().getHeight());
+			gc.strokeRect(arenaRect.getMinX(), arenaRect.getMinY(), arenaRect.getWidth(), arenaRect.getHeight());
 
 		});
 
 		canvasOverVideo.setOnMouseReleased(event -> {
 			// Do what you want with selection's properties here
-			System.out.println(project.getVideo().getArenaBounds().getX() + project.getVideo().getArenaBounds().getY() + project.getVideo().getArenaBounds().getWidth() + project.getVideo().getArenaBounds().getHeight());
+			//System.out.println(project.getVideo().getArenaBounds().getX() + project.getVideo().getArenaBounds().getY() + project.getVideo().getArenaBounds().getWidth() + project.getVideo().getArenaBounds().getHeight());
 			if (calibrationPoints.size() > 2 ) {
 				createDialog();
 			}

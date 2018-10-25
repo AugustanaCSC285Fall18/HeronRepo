@@ -55,10 +55,10 @@ public class SingleFrameShapeFinder {
 
 		visualizationFrame = diffFrame;
 		final Scalar MAGENTA = new Scalar(255,0,255);
-		double arenaX1 = vid.getArenaBounds().getX();
-		double arenaY1= vid.getArenaBounds().getY();
-		double arenaX2 = vid.getArenaBounds().getX() + vid.getArenaBounds().getWidth();
-		double arenaY2= vid.getArenaBounds().getY() + vid.getArenaBounds().getHeight();
+		double arenaX1 = vid.getArenaBounds().getMinX();
+		double arenaY1= vid.getArenaBounds().getMinY();
+		double arenaX2 = vid.getArenaBounds().getMaxX();
+		double arenaY2= vid.getArenaBounds().getMaxY();
 		
 		Imgproc.rectangle(visualizationFrame, new Point(arenaX1,arenaY1),
 				new Point(arenaX2,arenaY2), MAGENTA);

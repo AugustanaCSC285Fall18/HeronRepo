@@ -1,5 +1,6 @@
 package datamodel;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;
 import java.io.FileNotFoundException;
 
@@ -15,7 +16,8 @@ public class Video {
 	private int emptyFrameNum;
 	private int startFrameNum;
 	private int endFrameNum;
-	private Rectangle trackArea;
+	private Rectangle2D trackArea;
+	
 	private ProjectData project;
 	public Video(String filePath) throws FileNotFoundException {
 		this.filePath = filePath;
@@ -28,9 +30,7 @@ public class Video {
 		startFrameNum = -1;
 		double frameWidth = videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
 		double frameHeight = videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
-		trackArea = new Rectangle();
-		trackArea.setWidth(frameWidth);
-		trackArea.setHeight(frameHeight);
+		trackArea = new Rectangle2D(0,0,frameWidth,frameHeight);
 	}
 	
 	public int getFrameWidth() {
@@ -129,17 +129,18 @@ public class Video {
 		return (xPixelsPerCm + yPixelsPerCm) / 2;
 	}
 	
-	public Rectangle getArenaBounds() {
+	public Rectangle2D getArenaBounds() {
 		return trackArea;
 	}
 	
-	public void setArenaBounds(Rectangle trackArea) {
+	public void setArenaBounds(Rectangle2D trackArea) {
 		this.trackArea = trackArea;
 	}
 	
 	public boolean inRectangle(double x, double y) {
-		return x >= trackArea.getX() && x <= trackArea.getX() + trackArea.getWidth() &&
-			y >= trackArea.getY() && y <= trackArea.getY() + trackArea.getHeight();
+		return trackArea.contains(x, y);
+//		return x >= trackArea.getMinX() && x <= trackArea.getMinX() + trackArea.getWidth() &&
+//			y >= trackArea.getY() && y <= trackArea.getY() + trackArea.getHeight();
 	}
 	public int getWidth() {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
