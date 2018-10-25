@@ -36,6 +36,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.effect.Light.Point;
 import javafx.scene.image.ImageView;
 
 import javafx.scene.input.MouseButton;
@@ -76,7 +77,7 @@ public class TimeWindowController {
 	private int getWidthLength;
 	private int getHeightLength;
 	private ProjectData project;
-
+	private Point2D center;
 	/**
 	 * This method sets the start time of the video
 	 */
@@ -194,12 +195,11 @@ public class TimeWindowController {
 			gc.setStroke(Color.RED);
 			if (calibrationPoints.size() == 1) {
 				gc.fillOval(event.getX() - 3, event.getY() - 3, 6, 6);
-				calibrationPoints.add(new Point2D(event.getX(), event.getY()));
+				center = new Point2D(event.getX(), event.getY());
 			}
 		});
 		canvasOverVideo.setOnMousePressed(event -> {
 			calibrationPoints.add(new Point2D(event.getX(), event.getY()));
-			System.out.println("a");
 		});
 		canvasOverVideo.setOnMouseDragged(event -> {
 			project.getVideo().getArenaBounds().setWidth(Math.abs(event.getX() - calibrationPoints.get(calibrationPoints.size()-1).getX()));
@@ -215,7 +215,7 @@ public class TimeWindowController {
 		canvasOverVideo.setOnMouseReleased(event -> {
 			// Do what you want with selection's properties here
 			System.out.println(project.getVideo().getArenaBounds().getX() + project.getVideo().getArenaBounds().getY() + project.getVideo().getArenaBounds().getWidth() + project.getVideo().getArenaBounds().getHeight());
-			if (project.getVideo().getArenaBounds().getHeight() != 0) {
+			if (calibrationPoints.size() > 2 ) {
 				createDialog();
 			}
 		});
