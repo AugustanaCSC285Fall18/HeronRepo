@@ -104,6 +104,7 @@ public class AutoTrackWindowController implements AutoTrackListener {
 			loadVideo(video.getFilePath());
 			video.setXPixelsPerCm(6.5); //  these are just rough estimates!
 			video.setYPixelsPerCm(6.7);
+			System.out.println("Arena: " + video.getArenaBounds());
 //			video.setStartFrameNum(Integer.parseInt(textfieldStartFrame.getText()));
 //			video.setEndFrameNum(Integer.parseInt(textfieldEndFrame.getText()));
 			autotracker = new AutoTracker();
@@ -141,9 +142,12 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		project.getUnassignedSegments().clear();
 		project.getUnassignedSegments().addAll(trackedSegments);
 
+		System.out.println("auto track complete");
+		System.out.println("trackedsegs: " + trackedSegments.size());
+		
 		for (AnimalTrack track: trackedSegments) {
+			System.out.println("  " + track.getAnimalID()+ " " + track.size());
 			System.out.println(track);
-//			System.out.println("  " + track.getPositions());
 		}
 		Platform.runLater(() -> { 
 			progressAutoTrack.setProgress(1.0);

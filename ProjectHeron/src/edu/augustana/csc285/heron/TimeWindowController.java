@@ -66,6 +66,9 @@ public class TimeWindowController {
 	@FXML private Button wholeBtn;
 	@FXML private Button emptyFrameBtn;
 	@FXML private ImageView videoView;
+	@FXML private Label timeLabel;
+	@FXML private TextField startTime;
+	@FXML private TextField endTime;
 	@FXML
 	private Canvas canvasOverVideo;
 	private Video vid;
@@ -80,6 +83,9 @@ public class TimeWindowController {
 	@FXML
 	public void selectStartTime() {
 		project.getVideo().setStartFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		int numSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) % 60);
+		int numMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) / 60;
+		startTime.setText(numMinutes + ":" + (numSeconds < 10 ? ("0" + numSeconds) : (""+numSeconds)));
 		if(allSelected()) {
 			nextBtn.setDisable(false);
 		}
@@ -115,6 +121,9 @@ public class TimeWindowController {
 	@FXML
 	public void selectEndTime() {
 		project.getVideo().setEndFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
+		int numSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) % 60);
+		int numMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) / 60;
+		endTime.setText(numMinutes + ":" + (numSeconds < 10 ? ("0" + numSeconds) : (""+numSeconds)));
 		if(allSelected()) {
 			nextBtn.setDisable(false);
 		}
@@ -131,6 +140,7 @@ public class TimeWindowController {
 	}
 	public void setProjectData(ProjectData project) {
 		this.project = project;
+		fitVideo();
 		Video vid = project.getVideo();		
 		if (vid.getFilePath() != null) {
 			try {
@@ -157,6 +167,9 @@ public class TimeWindowController {
 							public void run() {
 								Mat newFrame = vid.grabFrame();
 								videoView.setImage(Utils.mat2Image(newFrame));
+								int numSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) % 60);
+								int numMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) / 60;
+								timeLabel.setText(numMinutes + ":" + (numSeconds < 10 ? ("0" + numSeconds) : (""+numSeconds)));
 
 							}
 						});
@@ -173,6 +186,8 @@ public class TimeWindowController {
 	}
 	@FXML
 	public void initialize() {
+		startTime.setDisable(true);
+		endTime.setDisable(true);
 		GraphicsContext gc = canvasOverVideo.getGraphicsContext2D();
 		calibrationPoints = new ArrayList<>();
 		canvasOverVideo.setOnMouseClicked(event -> {
@@ -293,5 +308,14 @@ public class TimeWindowController {
 		//	nextBtn.setDisable(false);
 		}
 	}
+	
+	public void fitVideo() {
+		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
+		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
+		canvasOverVideo.setWidth(prefWidth);
+		canvasOverVideo.setHeight(prefHeight);
+		videoView.setFitWidth(prefWidth);
+		videoView.setFitHeight(prefHeight);
+		}
+	}
 
-}

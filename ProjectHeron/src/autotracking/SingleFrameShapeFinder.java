@@ -11,6 +11,8 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import datamodel.Video;
+
 public class SingleFrameShapeFinder {
 	
 	private Mat emptyBackgroundFrame;
@@ -33,7 +35,7 @@ public class SingleFrameShapeFinder {
 		this.maxDetectedShapeArea = maxDetectedShapeArea;
 	}
 	
-	public List<DetectedShape> findShapes(Mat matFrame) {
+	public List<DetectedShape> findShapes(Mat matFrame, Video vid) {
 		List<DetectedShape> shapes = new ArrayList<>();
 		
 		Mat diffFrame = new Mat(), grayDiff = new Mat(), bwMask = new Mat(), erodedMask = new Mat();
@@ -52,6 +54,14 @@ public class SingleFrameShapeFinder {
 
 
 		visualizationFrame = diffFrame;
+		final Scalar MAGENTA = new Scalar(255,0,255);
+		double arenaX1 = vid.getArenaBounds().getX();
+		double arenaY1= vid.getArenaBounds().getY();
+		double arenaX2 = vid.getArenaBounds().getX() + vid.getArenaBounds().getWidth();
+		double arenaY2= vid.getArenaBounds().getY() + vid.getArenaBounds().getHeight();
+		
+		Imgproc.rectangle(visualizationFrame, new Point(arenaX1,arenaY1),
+				new Point(arenaX2,arenaY2), MAGENTA);
 		for (int i = 0; i < contours.size(); i++) {
 			
 			DetectedShape shape = new DetectedShape(contours.get(i));

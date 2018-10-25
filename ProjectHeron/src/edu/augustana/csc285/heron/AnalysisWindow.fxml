@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
@@ -15,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="analysisWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.0" prefWidth="679.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
+<BorderPane fx:id="analysisWindow" prefHeight="470.0" prefWidth="719.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.augustana.csc285.heron.AnalysisWindowController">
    <bottom>
       <AnchorPane prefHeight="141.0" prefWidth="510.0" BorderPane.alignment="CENTER">
          <children>
@@ -30,8 +32,11 @@
             <Label layoutX="145.0" layoutY="69.0" prefHeight="17.0" prefWidth="51.0" text="Path" />
             <Button fx:id="showBtn" layoutX="346.0" layoutY="65.0" mnemonicParsing="false" onAction="#showPath" text="Show" />
             <Button fx:id="showTrack" layoutX="346.0" layoutY="40.0" mnemonicParsing="false" onAction="#showFullTrack" text="Show Chick Path" />
-            <Button layoutX="49.0" layoutY="16.0" mnemonicParsing="false" text="Return" />
-            <Button layoutX="56.0" layoutY="40.0" mnemonicParsing="false" text="Play" />
+            <Button fx:id="saveBtn" layoutX="14.0" layoutY="90.0" mnemonicParsing="false" onAction="#saveProjectData" text="Save" />
+            <CheckBox fx:id="hasTrackBox" layoutX="398.0" layoutY="70.0" mnemonicParsing="false" />
+            <Label fx:id="timeLabel" layoutX="460.0" layoutY="6.0" />
+            <Label fx:id="startTime" layoutX="35.0" layoutY="36.0" text="Label" />
+            <Label fx:id="endTime" layoutX="35.0" layoutY="53.0" text="Label" />
          </children>
       </AnchorPane>
    </bottom>
@@ -78,7 +83,10 @@
             <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                <children>
                   <Label prefHeight="17.0" prefWidth="85.0" />
-                  <Button fx:id="incrementSetBtn" mnemonicParsing="false" onAction="#setIncrement" text="Set" />
+                  <Button fx:id="incrementSetBtn" mnemonicParsing="false" onAction="#setIncrement" text="Set">
+                     <FlowPane.margin>
+                        <Insets bottom="10.0" />
+                     </FlowPane.margin></Button>
                </children>
             </FlowPane>
          </children>

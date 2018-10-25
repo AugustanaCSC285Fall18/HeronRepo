@@ -1,6 +1,8 @@
 package edu.augustana.csc285.heron;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 
 public class AnalysisWindowController {
 
@@ -41,13 +44,17 @@ public class AnalysisWindowController {
 	@FXML private Button confirmBtn;
 	@FXML private Button setBtn;
 	@FXML private Button showBtn;
+	@FXML private Button saveBtn;
 	@FXML private TextField chickID;
 	@FXML private Canvas canvasOverVideo;
+	@FXML private Label startTime;
+	@FXML private Label endTime;
 	@FXML private ChoiceBox<String> chickIDs;
 	@FXML private ChoiceBox<String> paths;
 	@FXML private ImageView imageView;
 	@FXML private Slider videoBar;
 	@FXML private BorderPane analysisWindow;
+	@FXML private Label timeLabel;
 	@FXML private Button mBack;
 	@FXML private Button mForward;
 	@FXML private Button incrementSetBtn;
@@ -55,6 +62,7 @@ public class AnalysisWindowController {
 	@FXML private Button confirmIncrementBtn;
 	@FXML private ChoiceBox<Double> timeChoices;
 	@FXML private TextField timeIncrement;
+	@FXML private CheckBox hasTrackBox;
 	private GraphicsContext gc;
 	private List<Color> colorChoice;
 	private int colorNum;
@@ -64,14 +72,20 @@ public class AnalysisWindowController {
 
 	public void setProjectData(ProjectData project) {
 		this.project = project;
+		int startTimeNumSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getStartFrameNum()) % 60);
+		int startTimeNumMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getStartFrameNum()) / 60;
+		int endTimeNumSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getEndFrameNum()) % 60);
+		int endTimeNumMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getEndFrameNum()) / 60;
+		startTime.setText("Start Time: " + startTimeNumMinutes + ":" +(startTimeNumSeconds < 10 ? ("0" + startTimeNumSeconds) : (""+ startTimeNumSeconds)));
+		endTime.setText("End Time: " + endTimeNumMinutes + ":" +(endTimeNumSeconds < 10 ? ("0" + endTimeNumSeconds) : (""+ endTimeNumSeconds)));
 		fitVideo();
 		videoBar.setMax(project.getVideo().getTotalNumFrames() - 1);
 		videoBar.setValue(project.getVideo().getStartFrameNum());
 		List<String> remove = new ArrayList<String>();
 		for(datamodel.AnimalTrack animal : project.getUnassignedSegments()) {
-			if(animal.size() < 66) {
+			if(animal.size() < project.getVideo().getFrameRate() * 2) {
 				remove.add(animal.getAnimalID());
-			} else {
+			} else if(!animal.getTimePointsWithinInterval(project.getVideo().getStartFrameNum(), project.getVideo().getStartFrameNum() + (int) project.getVideo().getFrameRate() * 2).isEmpty()){
 				paths.getItems().add(animal.getAnimalID());
 			}
 		}
@@ -82,6 +96,7 @@ public class AnalysisWindowController {
 
 	@FXML
 	public void initialize() {
+		hasTrackBox.setDisable(true);
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true); 
 		timeIncrement.setEditable(false);
@@ -105,22 +120,27 @@ public class AnalysisWindowController {
 				
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY) {
-					if(chickIDs.getValue() != null && project.getVideo().getCurrentFrameNum() >= project.getVideo().getStartFrameNum() && 
-							project.getVideo().getCurrentFrameNum() <= project.getVideo().getEndFrameNum()) {
-						if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
-							project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
-									e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
-							gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
-							gc.fillOval(e.getX()-5, e.getY()-5, 10, 10);
+					if(project.getVideo().inRectangle(e.getX(), e.getSceneY())){
+						if(chickIDs.getValue() != null && project.getVideo().getCurrentFrameNum() >= project.getVideo().getStartFrameNum() && 
+								project.getVideo().getCurrentFrameNum() <= project.getVideo().getEndFrameNum()) {
+							if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
+								project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
+										e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
+								gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
+							gc.fillOval(e.getX()-3, e.getY()-3, 6, 6);
+							} //else {
+								//project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory().remove(project.getAnimalTrackInTracks(chickIDs.getValue()).getTimePointAtTime(project.getVideo().getCurrentFrameNum()));
+								//project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
+										//e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
+							//}							
+							int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() + project.getVideo().getFrameRate());
+							if(project.getVideo().getEndFrameNum() >= newFrameNum){
+								videoBar.setValue((double)newFrameNum);
+							}
 						}
+						
 					}
-				} else if (e.getButton() == MouseButton.SECONDARY) {
-					if(!project.getTracks().isEmpty()) {
-						project.getTracks().remove(project.getTracks().size()-1);
-					}
-					gc.clearRect(e.getX()-5, e.getY()-5, 20, 20);
-
-				}
+				} 
 			}
 		};
 		canvasOverVideo.setOnMouseClicked(eventHandler);
@@ -146,6 +166,25 @@ public class AnalysisWindowController {
 					// this method sets the frame of videoView
 					public void run() {
 						showFrameAt((int) newValue.doubleValue());
+						int numSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) % 60);
+						int numMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getCurrentFrameNum()) / 60;
+						timeLabel.setText(numMinutes + ":" + (numSeconds < 10 ? ("0" + numSeconds) : (""+numSeconds)));
+						int beforeTime = project.getVideo().getCurrentFrameNum() - (int)project.getVideo().getFrameRate();
+						int afterTime = project.getVideo().getCurrentFrameNum() + (int)project.getVideo().getFrameRate();
+						for(AnimalTrack animal : project.getUnassignedSegments()) {
+							if(!paths.getItems().contains(animal.getAnimalID())) {
+								if(!animal.getTimePointsWithinInterval(beforeTime < 0 ? 0 : beforeTime , afterTime > project.getVideo().getEndFrameNum() ? project.getVideo().getEndFrameNum() : afterTime).isEmpty()) {
+									paths.getItems().add(animal.getAnimalID());
+								}
+							} else if(animal.getTimePointsWithinInterval(beforeTime < 0 ? 0 : beforeTime , afterTime > project.getVideo().getEndFrameNum() ? project.getVideo().getEndFrameNum() : afterTime).isEmpty()) {
+								paths.getItems().remove(animal.getAnimalID());
+							}
+						}
+						if(!paths.getItems().isEmpty()) {
+							hasTrackBox.setSelected(true);
+						} else {
+							hasTrackBox.setSelected(false);
+						}
 					}
 
 				});
@@ -177,8 +216,9 @@ public class AnalysisWindowController {
 		if(chickIDs.getValue() != null && paths.getValue() != null) {
 			if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getAtFrameRecorded())) {
 				AnimalTrack chosenChick = project.getAnimalTrackInTracks(chickIDs.getValue());
-				for(TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
-					chosenChick.add(point);
+				AnimalTrack chosenPath = project.getAnimalTrackInUnassignedSegments(paths.getValue());
+				for(int numPoints = 0; numPoints < chosenPath.size() / (int) project.getVideo().getFrameRate(); numPoints++) {
+					chosenChick.add(chosenPath.getPositionHistory().get(numPoints * (int) project.getVideo().getFrameRate()));
 				}
 				project.getUnassignedSegments().remove(project.getAnimalTrackInUnassignedSegments(paths.getValue()));
 				paths.getItems().remove(paths.getValue());
@@ -207,7 +247,7 @@ public class AnalysisWindowController {
 
 	public void showFullTrack(ActionEvent event) {
 		if (chickIDs.getValue() != null) {
-			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
+			gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
 			gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
 			for(datamodel.TimePoint point : project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory()) {
 				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(),
@@ -218,19 +258,13 @@ public class AnalysisWindowController {
 	public void fitVideo() {
 		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
 		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
-		if (prefWidth > imageView.getFitWidth() || prefHeight > imageView.getFitHeight()) {
-			canvasOverVideo.setWidth(prefWidth/1.75);
-			canvasOverVideo.setHeight(prefHeight/1.75);
-			imageView.setFitWidth(prefWidth/1.75);
-			imageView.setFitHeight(prefHeight/1.75);
-		} else {
 			canvasOverVideo.setWidth(prefWidth);
 			canvasOverVideo.setHeight(prefHeight);
 			imageView.setFitWidth(prefWidth);
 			imageView.setFitHeight(prefHeight);
 //			analysisWindow.setPrefWidth(analysisWindow.getWidth());
 //			analysisWindow.setPrefHeight(analysisWindow.getHeight());
-		}
+		
 	}
 	
 	@FXML
@@ -268,11 +302,9 @@ public class AnalysisWindowController {
 			timer.shutdown();  // stop the auto-playing
 			timer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
-		if(project.allHaveTimePoint(project.getVideo().getCurrentFrameNum()) || project.getVideo().getCurrentFrameNum() < project.getVideo().getStartFrameNum()) {
-			int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() + timeJump * project.getVideo().getFrameRate());
-			if(project.getVideo().getEndFrameNum() >= newFrameNum){
-				videoBar.setValue((double)newFrameNum);
-			}
+		int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() + timeJump * project.getVideo().getFrameRate());
+		if(project.getVideo().getEndFrameNum() >= newFrameNum){
+			videoBar.setValue((double)newFrameNum);
 		}
 
 	}
@@ -288,5 +320,15 @@ public class AnalysisWindowController {
 		if(project.getVideo().getStartFrameNum() <= newFrameNum){
 			videoBar.setValue((double)newFrameNum);
 		}
+	}
+	
+	@FXML
+	public void saveProjectData() throws FileNotFoundException {
+		FileChooser fileChooser = new FileChooser();
+		File file = fileChooser.showSaveDialog(showBtn.getScene().getWindow());
+		if(file != null) {
+			project.saveToFile(file);
+		}
+		
 	}
 }

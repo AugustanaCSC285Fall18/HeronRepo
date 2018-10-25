@@ -26,9 +26,11 @@ public class Video {
 		emptyFrameNum = -1;
 		endFrameNum = -1;
 		startFrameNum = -1;
-		int frameWidth = (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
-		int frameHeight = (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
+		double frameWidth = videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
+		double frameHeight = videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
 		trackArea = new Rectangle();
+		trackArea.setWidth(frameWidth);
+		trackArea.setHeight(frameHeight);
 	}
 	
 	public int getFrameWidth() {
@@ -135,11 +137,22 @@ public class Video {
 		this.trackArea = trackArea;
 	}
 	
+	public boolean inRectangle(double x, double y) {
+		return x >= trackArea.getX() && x <= trackArea.getX() + trackArea.getWidth() &&
+			y >= trackArea.getY() && y <= trackArea.getY() + trackArea.getHeight();
+	}
 	public int getWidth() {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
 	}
 	public int getHeight() {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
+	}
+	
+	synchronized void connectVideoCapture() throws FileNotFoundException {
+		this.videoCap = new VideoCapture(filePath);
+		if (!videoCap.isOpened()) {
+			throw new FileNotFoundException("Unable to open video file: " + filePath);
+		}
 	}
 	
 	public Mat grabFrame() {

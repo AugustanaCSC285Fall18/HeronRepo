@@ -1,6 +1,7 @@
 package datamodel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -36,6 +37,7 @@ public class AnimalTrack {
 	 */
 	public void add(double x, double y, int time) {
 		positionHistory.add(new TimePoint(x, y, time));
+		Collections.sort(positionHistory);
 	}
 	
 	/**
@@ -45,6 +47,7 @@ public class AnimalTrack {
 	 */
 	public void add(TimePoint xy) {
 		positionHistory.add(xy);
+		Collections.sort(positionHistory);
 	}
 	
 	public TimePoint TimePointAtIndex(int index) {
@@ -89,6 +92,17 @@ public class AnimalTrack {
 	public int size() {
 		return positionHistory.size();
 	}
+	
+	public List<TimePoint> getTimePointsWithinInterval(int startFrameNum, int endFrameNum) {
+		List<TimePoint> pointsInInterval = new ArrayList<>();
+		for (TimePoint pt : positionHistory) {
+			if (pt.getFrameNum() >= startFrameNum && pt.getFrameNum() <= endFrameNum) {
+				pointsInInterval.add(pt);
+			}
+		}
+		return pointsInInterval;
+	}
+	
 	/**
 	 * This gives the history of the TimePositions of the the chick
 	 * @return

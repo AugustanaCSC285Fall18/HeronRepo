@@ -1,4 +1,4 @@
-package edu.augustana.csc285.heron;
+package datamodel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
