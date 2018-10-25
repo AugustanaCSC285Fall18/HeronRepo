@@ -76,7 +76,7 @@ public class AutoTracker {
 
 			
 			Mat matFrame = vid.readFrame();			
-			List<DetectedShape> candidateShapes = frameAnalyzer.findShapes(matFrame);
+			List<DetectedShape> candidateShapes = frameAnalyzer.findShapes(matFrame, vid);
 			
 			Mat visualizationFrame = frameAnalyzer.getVisualizationFrame();
 

@@ -131,6 +131,7 @@ public class TimeWindowController {
 	}
 	public void setProjectData(ProjectData project) {
 		this.project = project;
+		fitVideo();
 		Video vid = project.getVideo();		
 		if (vid.getFilePath() != null) {
 			try {
@@ -296,5 +297,14 @@ public class TimeWindowController {
 		nextBtn.setDisable(false);
 
 	}
+	
+	public void fitVideo() {
+		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
+		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
+		canvasOverVideo.setWidth(prefWidth);
+		canvasOverVideo.setHeight(prefHeight);
+		videoView.setFitWidth(prefWidth);
+		videoView.setFitHeight(prefHeight);
+		}
+	}
 
-}

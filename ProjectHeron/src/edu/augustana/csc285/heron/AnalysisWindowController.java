@@ -219,19 +219,13 @@ public class AnalysisWindowController {
 	public void fitVideo() {
 		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
 		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
-		if (prefWidth > imageView.getFitWidth() || prefHeight > imageView.getFitHeight()) {
-			canvasOverVideo.setWidth(prefWidth/1.75);
-			canvasOverVideo.setHeight(prefHeight/1.75);
-			imageView.setFitWidth(prefWidth/1.75);
-			imageView.setFitHeight(prefHeight/1.75);
-		} else {
 			canvasOverVideo.setWidth(prefWidth);
 			canvasOverVideo.setHeight(prefHeight);
 			imageView.setFitWidth(prefWidth);
 			imageView.setFitHeight(prefHeight);
 //			analysisWindow.setPrefWidth(analysisWindow.getWidth());
 //			analysisWindow.setPrefHeight(analysisWindow.getHeight());
-		}
+		
 	}
 	
 	@FXML
