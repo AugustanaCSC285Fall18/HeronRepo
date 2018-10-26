@@ -75,10 +75,10 @@ public class TimeWindowController {
 	private Canvas canvasOverVideo;
 	private Video vid;
 	private ArrayList<Point2D> calibrationPoints;
-	private int getWidthLength;
-	private int getHeightLength;
+	private double getWidthLength;
+	private double getHeightLength;
 	private ProjectData project;
-	private Point2D center;
+	
 	/**
 	 * This method sets the start time of the video
 	 */
@@ -97,7 +97,9 @@ public class TimeWindowController {
 		int emptyFrame = project.getVideo().getEmptyFrameNum();
 		int startFrameNum = project.getVideo().getStartFrameNum();
 		int endFrameNum = project.getVideo().getEndFrameNum();
-		return startFrameNum != -1 && endFrameNum != -1 && startFrameNum < endFrameNum; //&& emptyFrame != -1;
+		double xPixelCm = project.getVideo().getXPixelsPerCm();
+		double yPixelCm = project.getVideo().getYPixelsPerCm();
+		return startFrameNum != -1 && endFrameNum != -1 && startFrameNum < endFrameNum && xPixelCm != 0 && yPixelCm != 0 && emptyFrame != -1;
 	}
 
 	@FXML
@@ -196,7 +198,7 @@ public class TimeWindowController {
 			gc.setStroke(Color.RED);
 			if (calibrationPoints.size() == 1) {
 				gc.fillOval(event.getX() - 3, event.getY() - 3, 6, 6);
-				center = new Point2D(event.getX(), event.getY());
+				 project.getVideo().setCenterPoint(event.getX(), event.getY());
 			}
 		});
 		canvasOverVideo.setOnMousePressed(event -> {
@@ -209,8 +211,9 @@ public class TimeWindowController {
 			double widthCanvas = Math.abs(event.getX() - startPointCanvas.getX());
 			double heightCanvas = Math.abs(event.getY() - startPointCanvas.getY());
 			
-			double ratio = Math.max(canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(),canvasOverVideo.getHeight() / project.getVideo().getFrameHeight());
-			Rectangle2D arenaRect = new Rectangle2D(minXCanvas*ratio,minYCanvas*ratio,(minXCanvas+widthCanvas)*ratio,(minYCanvas+heightCanvas)*ratio); 
+			double ratioOfHeight = project.getVideo().getFrameHeight() / canvasOverVideo.getHeight();
+			double ratioOfWidth = project.getVideo().getFrameWidth() / canvasOverVideo.getWidth();
+			Rectangle2D arenaRect = new Rectangle2D(minXCanvas*ratioOfWidth,minYCanvas*ratioOfHeight,(minXCanvas+widthCanvas)*ratioOfWidth,(minYCanvas+heightCanvas)*ratioOfHeight); 
 			
 			project.getVideo().setArenaBounds(arenaRect);
 			
@@ -222,8 +225,7 @@ public class TimeWindowController {
 
 		canvasOverVideo.setOnMouseReleased(event -> {
 			// Do what you want with selection's properties here
-			//System.out.println(project.getVideo().getArenaBounds().getX() + project.getVideo().getArenaBounds().getY() + project.getVideo().getArenaBounds().getWidth() + project.getVideo().getArenaBounds().getHeight());
-			if (calibrationPoints.size() > 2 ) {
+			if (calibrationPoints.size() >= 2 ) {
 				createDialog();
 			}
 		});
@@ -252,15 +254,9 @@ public class TimeWindowController {
 		primary.setScene(timeScene);
 	
 	}
-
-	public double handleCaliberationWidth() {
-		return getWidthLength * 1.0 / project.getVideo().getArenaBounds().getWidth();
-	}
-
-	public double handleCaliberationHeight() {
-		return getHeightLength * 1.0 /project.getVideo().getArenaBounds().getHeight();
-	}
-
+	/**
+	 * This method will make a pop-up dialog when users create rectangle.
+	 */
 	public void createDialog() {
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -309,14 +305,19 @@ public class TimeWindowController {
 		});
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 		if (result.isPresent()) {
-			getWidthLength = Integer.parseInt(widthLength.getText());
-			getHeightLength = Integer.parseInt(heightLength.getText());
-			project.getVideo().setStartFrameNum(0);
+			getWidthLength = Double.parseDouble(widthLength.getText());
+			getHeightLength = Double.parseDouble(heightLength.getText());
 			project.getVideo().setEndFrameNum((int)(project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT-1)));
-		//	nextBtn.setDisable(false);
+			project.getVideo().setXPixelsPerCm(project.getVideo().getArenaBounds().getWidth() / getWidthLength);
+			project.getVideo().setYPixelsPerCm(project.getVideo().getArenaBounds().getHeight() / getHeightLength);
+			if(allSelected()) {
+				nextBtn.setDisable(false);
+			}
 		}
 	}
-	
+	/**
+	 * this method make the video fit with the image view.
+	 */
 	public void fitVideo() {
 		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
 		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
