@@ -78,6 +78,7 @@ public class AnalysisWindowController {
 		int endTimeNumMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getEndFrameNum()) / 60;
 		startTime.setText("Start Time: " + startTimeNumMinutes + ":" +(startTimeNumSeconds < 10 ? ("0" + startTimeNumSeconds) : (""+ startTimeNumSeconds)));
 		endTime.setText("End Time: " + endTimeNumMinutes + ":" +(endTimeNumSeconds < 10 ? ("0" + endTimeNumSeconds) : (""+ endTimeNumSeconds)));
+		timeJump = project.getVideo().getFrameRate();
 		fitVideo();
 		videoBar.setMax(project.getVideo().getTotalNumFrames() - 1);
 		videoBar.setValue(project.getVideo().getStartFrameNum());
@@ -133,7 +134,7 @@ public class AnalysisWindowController {
 								//project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
 										//e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
 							//}							
-							int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() + project.getVideo().getFrameRate());
+							int newFrameNum = (int)(project.getVideo().getCurrentFrameNum() + timeJump * project.getVideo().getFrameRate());
 							if(project.getVideo().getEndFrameNum() >= newFrameNum){
 								videoBar.setValue((double)newFrameNum);
 							}
