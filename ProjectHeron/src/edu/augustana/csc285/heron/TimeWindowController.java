@@ -314,6 +314,7 @@ public class TimeWindowController {
 				nextBtn.setDisable(false);
 			}
 		}
+		
 	}
 	/**
 	 * this method make the video fit with the image view.

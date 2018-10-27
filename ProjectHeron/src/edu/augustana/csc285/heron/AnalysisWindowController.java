@@ -347,7 +347,7 @@ public class AnalysisWindowController {
 		    filePath = filePath.substring(0, pos);
 		}
 		
-		filePath = filePath + ".csv";
+		//filePath = filePath + ".csv";
 		
 		String fileName = new File(filePath).getName();
 		System.out.println("suggested filename: "+ fileName);
