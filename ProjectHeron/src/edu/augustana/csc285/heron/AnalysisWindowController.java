@@ -332,4 +332,40 @@ public class AnalysisWindowController {
 		}
 		
 	}
+	/*
+	 * Exporting CSV file.
+	 * Suggested file name as name of the video.
+	 */
+@FXML
+	public void exportCSVData() throws FileNotFoundException{
+		
+		String filePath = project.getVideo().getFilePath();
+		System.out.println("original video path: "+ filePath);
+
+		int pos = filePath.lastIndexOf(".");
+		if (pos > 0) {
+		    filePath = filePath.substring(0, pos);
+		}
+		
+		//filePath = filePath + ".csv";
+		
+		String fileName = new File(filePath).getName();
+		System.out.println("suggested filename: "+ fileName);
+
+		FileChooser fileChooser = new FileChooser();
+		
+		fileChooser.setInitialFileName(fileName);
+		File file = fileChooser.showSaveDialog(showBtn.getScene().getWindow());
+		String userFileName = file + ".csv";
+		
+		if(file != null) {
+			System.out.println("user chose: "+userFileName);
+
+			project.exportCSV(userFileName);
+		}
+		
+		
+		
+	}
+
 }

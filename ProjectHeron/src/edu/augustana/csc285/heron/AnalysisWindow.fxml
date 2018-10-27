@@ -37,6 +37,7 @@
             <Label fx:id="timeLabel" layoutX="460.0" layoutY="6.0" />
             <Label fx:id="startTime" layoutX="35.0" layoutY="36.0" text="Label" />
             <Label fx:id="endTime" layoutX="35.0" layoutY="53.0" text="Label" />
+            <Button fx:id="exportBtn" layoutX="57.0" layoutY="90.0" mnemonicParsing="false" onAction="#exportCSVData" text="Export" />
          </children>
       </AnchorPane>
    </bottom>

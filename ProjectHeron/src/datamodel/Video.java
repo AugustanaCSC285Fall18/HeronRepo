@@ -1,5 +1,6 @@
 package datamodel;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.shape.Rectangle;
 import java.io.FileNotFoundException;
@@ -17,8 +18,9 @@ public class Video {
 	private int startFrameNum;
 	private int endFrameNum;
 	private Rectangle2D trackArea;
-	
+	private Point2D center;
 	private ProjectData project;
+	
 	public Video(String filePath) throws FileNotFoundException {
 		this.filePath = filePath;
 		this.videoCap = new VideoCapture(filePath);
@@ -179,5 +181,13 @@ public class Video {
 
 		return frame;
 	}
-		
+	
+	public void setCenterPoint(double x, double y) {
+		this.center= new Point2D(x,y);
+	}
+	
+	public Point2D getCenterPoint() {
+		return this.center;
+	}
+	
 }
