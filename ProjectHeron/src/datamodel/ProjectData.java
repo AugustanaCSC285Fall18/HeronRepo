@@ -67,6 +67,15 @@ public class ProjectData {
 		return null;
 	}
 	
+	public double distanceCovered(String id) {
+		AnimalTrack chosenChick = getAnimalTrackInTracks(id);
+		double distance = 0;
+		for(int i = 0; i < chosenChick.size() - 1; i++) {
+			distance += chosenChick.getPositionHistory().get(i).getDistanceTo(chosenChick.getPositionHistory().get(i + 1)); 
+		}
+		return distance;
+	}
+	
 	public void saveToFile(File saveFile) throws FileNotFoundException {
 		String json = toJSON();
 		PrintWriter out = new PrintWriter(saveFile);
