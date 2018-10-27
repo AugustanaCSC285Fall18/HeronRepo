@@ -90,5 +90,28 @@ public class ProjectData {
 		data.getVideo().connectVideoCapture();
 		return data;
 	}
+	/**
+	 * This method convert data to CSV file.
+	 * Order of ChickID, Time, X, Y
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+public void exportCSV(String fileName) throws FileNotFoundException {
+	
+		PrintWriter writer = new PrintWriter(fileName);
+		writer.println("ChickID, Time(sec), X, Y");
+		for(AnimalTrack chick : tracks) {
+			for(TimePoint point : chick.getPositionHistory()) {
+				int time = (int) video.convertFrameNumsToSeconds(point.getFrameNum());
+				//double x = point.getX() - 
+				//the format is ChickID, Time, X, Y
+				writer.println(chick.getAnimalID() + "," + time + "," + point.getX() + "," + point.getY());
+			}
+		}
+		writer.close();
+		
+	
+	
+	}
 	
 }
