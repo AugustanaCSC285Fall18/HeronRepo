@@ -37,8 +37,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
-public class AnalysisWindowController {
 
+public class AnalysisWindowController {
 	private ProjectData project;
 	@FXML private Button addChickBtn;
 	@FXML private Button confirmBtn;
@@ -70,7 +70,10 @@ public class AnalysisWindowController {
 	private ScheduledExecutorService timer;
 	private double timeJump;
 
-
+/**
+ * This method will set project for user to work on
+ * @param project which will be chosed
+ */
 	public void setProjectData(ProjectData project) {
 		this.project = project;
 		int startTimeNumSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getStartFrameNum()) % 60);
@@ -95,7 +98,10 @@ public class AnalysisWindowController {
 			project.getUnassignedSegments().remove(project.getAnimalTrackInUnassignedSegments(id));
 		}
 	}
-
+	
+	/**
+	 * This method will initial analysis window
+	 */
 	@FXML
 	public void initialize() {
 		hasTrackBox.setDisable(true);
@@ -202,7 +208,8 @@ public class AnalysisWindowController {
 		});
 
 	}
-
+	
+	
 	@FXML
 	protected void addChick(ActionEvent event) {
 		chickID.setEditable(true);

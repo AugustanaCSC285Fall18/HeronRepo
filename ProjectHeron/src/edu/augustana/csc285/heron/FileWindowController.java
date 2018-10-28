@@ -63,6 +63,10 @@ public class FileWindowController {
 		
 	}
 	
+	/**
+	 * this method will load the video for tracking
+	 * @throws FileNotFoundException
+	 */
 	@FXML
 	public void handleLoad() throws FileNotFoundException {
 		
@@ -77,6 +81,7 @@ public class FileWindowController {
 			NextBtn.setDisable(false);
 		}
 	}
+	
 	/**
 	 * This method allows the FileWindow to go to the TimeWindow
 	 * @throws IOException -if there is no pane to load, then the exception is thrown
@@ -109,6 +114,7 @@ public class FileWindowController {
 			primary.setScene(timeScene);
 		}
 	}
+	
 	/**
 	 * This method will provide information about people who did this program.
 	 */
