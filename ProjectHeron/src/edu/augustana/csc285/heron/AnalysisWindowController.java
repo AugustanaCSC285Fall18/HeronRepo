@@ -121,7 +121,7 @@ public class AnalysisWindowController {
 				
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY) {
-					if(project.getVideo().inRectangle(e.getX(), e.getSceneY())){
+					if(project.getVideo().inRectangle(e.getX(), e.getY())){
 						if(chickIDs.getValue() != null && project.getVideo().getCurrentFrameNum() >= project.getVideo().getStartFrameNum() - project.getVideo().getFrameRate() && 
 								project.getVideo().getCurrentFrameNum() <= project.getVideo().getEndFrameNum() + project.getVideo().getFrameRate()) {
 							if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {

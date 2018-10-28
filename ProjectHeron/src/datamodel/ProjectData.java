@@ -107,7 +107,6 @@ public class ProjectData {
 	 * @throws FileNotFoundException
 	 */
 public void exportCSV(String fileName) throws FileNotFoundException {
-	
 		PrintWriter writer = new PrintWriter(fileName);
 		writer.println("ChickID, Time(sec), X, Y");
 		for(AnimalTrack chick : tracks) {
