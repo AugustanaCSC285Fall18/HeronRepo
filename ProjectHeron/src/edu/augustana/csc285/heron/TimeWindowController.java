@@ -144,6 +144,8 @@ public class TimeWindowController {
 		Video vid = project.getVideo();		
 		if (vid.getFilePath() != null) {
 			try {
+				//@author <a href="mailto:luigi.derussis@polito.it">Luigi De Russis</a>
+				// @author <a href="http://max-z.de">Maximilian Zuleger</a>
 				// start the video capture
 				vid.getVideoCap().open(vid.getFilePath());
 				

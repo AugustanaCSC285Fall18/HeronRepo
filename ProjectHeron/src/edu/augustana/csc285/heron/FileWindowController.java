@@ -3,7 +3,6 @@ package edu.augustana.csc285.heron;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import datamodel.ProjectData;
 import javafx.fxml.FXML;

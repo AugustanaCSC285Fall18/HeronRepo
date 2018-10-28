@@ -1,5 +1,6 @@
 package datamodel;
 
+
 import java.io.FileNotFoundException;
 
 import org.opencv.core.Mat;
@@ -19,7 +20,6 @@ public class Video {
 	private int endFrameNum;
 	private Rectangle2D trackArea;
 	private Point2D center;
-	private ProjectData project;
 	
 	/**
 	 * This method constructs the video object given the filePath in a string. If the file
