@@ -1,13 +1,14 @@
 package datamodel;
 
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Rectangle;
+
 import java.io.FileNotFoundException;
 
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
+
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
 public class Video {
 	private double xPixelsPerCm;
@@ -19,7 +20,6 @@ public class Video {
 	private int endFrameNum;
 	private Rectangle2D trackArea;
 	private Point2D center;
-	private ProjectData project;
 	
 	/**
 	 * This method constructs the video object given the filePath in a string. If the file

@@ -1,29 +1,23 @@
 package edu.augustana.csc285.heron;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
-
-
-
 import org.opencv.core.Mat;
 import org.opencv.videoio.Videoio;
+
 import datamodel.ProjectData;
 import datamodel.Video;
-import edu.augustana.csc285.heron.Utils;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -33,22 +27,12 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.effect.Light.Point;
 import javafx.scene.image.ImageView;
-
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-
-
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -160,6 +144,8 @@ public class TimeWindowController {
 		Video vid = project.getVideo();		
 		if (vid.getFilePath() != null) {
 			try {
+				//@author <a href="mailto:luigi.derussis@polito.it">Luigi De Russis</a>
+				// @author <a href="http://max-z.de">Maximilian Zuleger</a>
 				// start the video capture
 				vid.getVideoCap().open(vid.getFilePath());
 				
