@@ -16,32 +16,57 @@ public class ProjectData {
 	private List<AnimalTrack> unassignedSegments;
 	private int atFrameRecorded;
 	
+	/**
+	 * Construct data projects.
+	 * @param videoFilePath - take String videoFilePath then store the information for video.
+	 * @throws FileNotFoundException
+	 */
 	public ProjectData(String videoFilePath) throws FileNotFoundException {
 		video = new Video(videoFilePath);
 		tracks = new ArrayList<>();
 		unassignedSegments = new ArrayList<>();
 		atFrameRecorded = video.getStartFrameNum();
 	}
-
+	/**
+	 * this gives video objects to access information about the video
+	 * @return - video
+	 */
 	public Video getVideo() {
 		return video;
 	}
-	
+	/**
+	 * This method gives int atFrameRecorded.
+	 * @return - frame
+	 */
 	public int getAtFrameRecorded() {
 		return atFrameRecorded;
 	}
-	
+	/**
+	 * This method add int numFrames to int atFrameRecorded.
+	 * @param numFrames
+	 */
 	public void addToAtFrameRecorded(int numFrames) {
 		atFrameRecorded += numFrames;
 	}
+	/**
+	 * This method gives List<AnimalTrack> track
+	 * @return - tracks
+	 */
 	public List<AnimalTrack> getTracks() {
 		return tracks;
 	}
-
+	/**
+	 * This method gives List<AnimalTrack> unassingedSegments
+	 * @return - unassingedSegments
+	 */
 	public List<AnimalTrack> getUnassignedSegments() {
 		return unassignedSegments;
 	}
-	
+	/**
+	 * This method return false if AnimalTrack animal doesn't have frameNum, otherwise return true.
+	 * @param frameNum
+	 * @return
+	 */
 	public boolean allHaveTimePoint(int frameNum) {
 		for(AnimalTrack animal : tracks) {
 			if(!animal.alreadyHasTime(frameNum)) {
@@ -50,7 +75,11 @@ public class ProjectData {
 		}
 		return true;
 	}
-	
+	/**
+	 * This method return auto tracked AnimalTrack animal if ID of animal is equal to String id. Otherwise return null.
+	 * @param id
+	 * @return
+	 */
 	public AnimalTrack getAnimalTrackInUnassignedSegments(String id) {
 		for(AnimalTrack animal : unassignedSegments) {
 			if(animal.getAnimalID().equals(id)) {
@@ -59,6 +88,11 @@ public class ProjectData {
 		}
 		return null;
 	}
+	/**
+	 * This method return the actual AnimalTrack animal if ID of animal is equal to String id. Otherwise return null.
+	 * @param id
+	 * @return
+	 */
 	public AnimalTrack getAnimalTrackInTracks(String id) {
 		for(AnimalTrack animal : tracks) {
 			if(animal.getAnimalID().equals(id) ) {
@@ -67,7 +101,11 @@ public class ProjectData {
 		}
 		return null;
 	}
-	
+	/**
+	 * This method return double distance of AnimalTrack chosenTrack.
+	 * @param id
+	 * @return - distance
+	 */
 	public double distanceCovered(String id) {
 		AnimalTrack chosenChick = getAnimalTrackInTracks(id);
 		double distance = 0;
@@ -83,6 +121,12 @@ public class ProjectData {
 		return distance;
 	}
 	
+	/**
+	 * This method calculate average distance between two chicks.
+	 * @param animal1
+	 * @param animal2
+	 * @return
+	 */
 	public double averageDistance(AnimalTrack animal1,AnimalTrack animal2) {
 		AnimalTrack chosenChick = animal1.size() > animal2.size() ? animal2 : animal1;
 		AnimalTrack notChosenChick = animal1.size() > animal2.size() ? animal1 : animal2;
@@ -107,19 +151,31 @@ public class ProjectData {
 		}
 		return distance / numPointComparisons;
 	}
-	
+	/**
+	 * This method allow data to be saved in Json file.
+	 * @param saveFile - String saveFile
+	 * @throws FileNotFoundException
+	 */
 	public void saveToFile(String saveFile) throws FileNotFoundException {
 		String json = toJSON();
 		PrintWriter out = new PrintWriter(saveFile);
 		out.print(json);
 		out.close();
 	}
-	
+	/**
+	 * This method gives json.
+	 * @return Json
+	 */
 	public String toJSON() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();		
 		return gson.toJson(this);
 	}
-	
+	/**
+	 * This method load data from Json.
+	 * @param loadFile
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	public static ProjectData loadFromFile(File loadFile) throws FileNotFoundException {
 		String json = new Scanner(loadFile).useDelimiter("\\Z").next();
 		return fromJSON(json);
@@ -154,7 +210,11 @@ public class ProjectData {
 		}
 		writer.close();
 	}
-	
+	/**
+	 * This method exports average distance between two objects which uses averageDistance method.
+	 * @param fileName	
+	 * @throws FileNotFoundException
+	 */
 	public void exportAverageDistances(String fileName) throws FileNotFoundException{
 		if(tracks.size() > 1) {
 			PrintWriter writer = new PrintWriter(fileName);
