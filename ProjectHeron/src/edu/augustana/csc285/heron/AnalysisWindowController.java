@@ -409,8 +409,9 @@ public class AnalysisWindowController {
 	public void saveProjectData() throws FileNotFoundException {
 		FileChooser fileChooser = new FileChooser();
 		File file = fileChooser.showSaveDialog(showBtn.getScene().getWindow());
+		String jsonFileName = file + ".json";
 		if(file != null) {
-			project.saveToFile(file);
+			project.saveToFile(jsonFileName);
 		}
 		
 	}
