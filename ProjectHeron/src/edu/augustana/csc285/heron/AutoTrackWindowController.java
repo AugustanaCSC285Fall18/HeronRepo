@@ -48,16 +48,7 @@ public class AutoTrackWindowController implements AutoTrackListener {
 	 * This method will initiate the GUI for auto tracking
 	 */
 	@FXML public void initialize() {
-		
-		//FIXME: this quick loading of a specific file and specific settings 
-		//       is for debugging purposes only, since there's no way to specify
-		//       the settings in the GUI right now...
-		//loadVideo("/home/forrest/data/shara_chicks_tracking/sample1.mp4");
-//		loadVideo("/home/forrest/data/shara_chicks_tracking/lowres/lowres2.avi");
-		//loadVideo("S:/class/cs/285/sample_videos/lowres2.mp4");		
-//		project.getVideo().setXPixelsPerCm(5.5); //  these are just rough estimates!
-//		project.getVideo().setYPixelsPerCm(5.5);
-		
+				
 		sliderVideoTime.valueProperty().addListener((obs, oldV, newV) -> showFrameAt(newV.intValue())); 
 	}
 	
@@ -129,11 +120,7 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		if (autotracker == null || !autotracker.isRunning()) {
 			Video video = project.getVideo();
 			loadVideo(video.getFilePath());
-			video.setXPixelsPerCm(6.5); //  these are just rough estimates!
-			video.setYPixelsPerCm(6.7);
 			System.out.println("Arena: " + video.getArenaBounds());
-//			video.setStartFrameNum(Integer.parseInt(textfieldStartFrame.getText()));
-//			video.setEndFrameNum(Integer.parseInt(textfieldEndFrame.getText()));
 			autotracker = new AutoTracker();
 			// Use Observer Pattern to give autotracker a reference to this object, 
 			// and call back to methods in this class to update progress.
