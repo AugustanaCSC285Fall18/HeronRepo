@@ -92,7 +92,11 @@ public class TimeWindowController {
 			nextBtn.setDisable(false);
 		}
 	}
-
+	
+	/**
+	 * This method will check that user took start time, end time, empty frame, center point and rectangle 
+	 * @return true if user took every thing.
+	 */
 	public boolean allSelected() {
 		int emptyFrame = project.getVideo().getEmptyFrameNum();
 		int startFrameNum = project.getVideo().getStartFrameNum();
@@ -101,7 +105,10 @@ public class TimeWindowController {
 		double yPixelCm = project.getVideo().getYPixelsPerCm();
 		return startFrameNum != -1 && endFrameNum != -1 && startFrameNum < endFrameNum && xPixelCm != 0 && yPixelCm != 0 && emptyFrame != -1;
 	}
-
+	
+	/**
+	 * this method will let user to choose the empty frame
+	 */
 	@FXML
 	public void selectEmptyFrame() {
 		project.getVideo().setEmptyFrameNum((int)(videoBar.getValue() / 1000 * (project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_COUNT) - 1)));
@@ -142,6 +149,11 @@ public class TimeWindowController {
 	public void setVideo(Video video) {
 		vid = video;
 	}
+	
+	/**
+	 * this method will set the project data to use when user work on program
+	 * @param project: project data that will be used
+	 */
 	public void setProjectData(ProjectData project) {
 		this.project = project;
 		fitVideo();
@@ -188,6 +200,9 @@ public class TimeWindowController {
 		}
 		
 	}
+	/**
+	 * This method will create any feature of TimeWindow
+	 */
 	@FXML
 	public void initialize() {
 		startTime.setDisable(true);
@@ -316,6 +331,7 @@ public class TimeWindowController {
 		}
 		
 	}
+	
 	/**
 	 * this method make the video fit with the image view.
 	 */

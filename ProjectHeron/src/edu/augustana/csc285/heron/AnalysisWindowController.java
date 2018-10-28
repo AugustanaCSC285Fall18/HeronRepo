@@ -36,9 +36,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+/**
+ * This class will create a GUI window for manual tracking and showing the path of chicks
+ * @author team Heron
+ *
+ */
 
 public class AnalysisWindowController {
-
 	private ProjectData project;
 	@FXML private Button addChickBtn;
 	@FXML private Button confirmBtn;
@@ -70,7 +74,10 @@ public class AnalysisWindowController {
 	private ScheduledExecutorService timer;
 	private double timeJump;
 
-
+/**
+ * This method will set project for user to work on
+ * @param project which will be chosed
+ */
 	public void setProjectData(ProjectData project) {
 		this.project = project;
 		int startTimeNumSeconds = ((int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getStartFrameNum()) % 60);
@@ -95,7 +102,10 @@ public class AnalysisWindowController {
 			project.getUnassignedSegments().remove(project.getAnimalTrackInUnassignedSegments(id));
 		}
 	}
-
+	
+	/**
+	 * This method will initial analysis window
+	 */
 	@FXML
 	public void initialize() {
 		hasTrackBox.setDisable(true);
@@ -202,13 +212,21 @@ public class AnalysisWindowController {
 		});
 
 	}
-
+	
+	/**
+	 * This method will control the button to add the chick
+	 * @param event: the action of user to add the chick
+	 */
 	@FXML
 	protected void addChick(ActionEvent event) {
 		chickID.setEditable(true);
 		confirmBtn.setDisable(false);
 	}
-
+	
+	/**
+	 * This method will confirm the chick that user add to program
+	 * @param event: the action of user to confirm the chick
+	 */
 	@FXML
 	protected void confirmChick(ActionEvent event) {
 		chickIDs.getItems().add(chickID.getText());
@@ -219,7 +237,11 @@ public class AnalysisWindowController {
 		chickID.setEditable(false);
 		confirmBtn.setDisable(true);
 	}
-
+	
+	/**
+	 * THis method will set the path for the chick that user are choosing
+	 * @param event: the action of user to set the path for the chick
+	 */
 	@FXML
 	protected void setPathtoChick(ActionEvent event) {
 		if(chickIDs.getValue() != null && paths.getValue() != null) {
@@ -234,13 +256,21 @@ public class AnalysisWindowController {
 			}
 		}
 	}
-
+	
+	/**
+	 * This method will control the image view to show the picture at a time.
+	 * @param frameNum: The number of frame that are being showed
+	 */
 	public void showFrameAt(int frameNum) {
 		project.getVideo().setCurrentFrameNum(frameNum);
 		Image curFrame = Utils.matToJavaFXImage(project.getVideo().readFrame());
 		imageView.setImage(curFrame);	
 	}
-
+	
+	/**
+	 * This method will show that path of chick that has been choose
+	 * @param event: The action of user to show the path of the chick
+	 */
 	@FXML
 	protected void showPath(ActionEvent event) {
 		if(paths.getValue() != null) {
@@ -253,7 +283,11 @@ public class AnalysisWindowController {
 			}
 		}
 	}
-
+	
+	/**
+	 * This method will show full track of all chick in the data
+	 * @param event: the action of user to show full of the path
+	 */
 	public void showFullTrack(ActionEvent event) {
 		if (chickIDs.getValue() != null) {
 			gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
@@ -264,6 +298,10 @@ public class AnalysisWindowController {
 			}
 		}
 	}
+	
+	/**
+	 * This method will make sure that real size of video will fit with the image view
+	 */
 	public void fitVideo() {
 		double prefWidth = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_WIDTH);
 		double prefHeight = project.getVideo().getVideoCap().get(Videoio.CAP_PROP_FRAME_HEIGHT);
@@ -276,6 +314,9 @@ public class AnalysisWindowController {
 		
 	}
 	
+	/**
+	 * This method will set the time jump for user
+	 */
 	@FXML
 	public void setIncrement() {
 		timeJump = timeChoices.getValue();
@@ -283,6 +324,9 @@ public class AnalysisWindowController {
 		mBack.setText(timeJump + " <<");
 	}
 	
+	/**
+	 * This method will confirm the time jump that user choose
+	 */
 	@FXML
 	public void comfirmIncrement() {
 		try {
@@ -299,12 +343,20 @@ public class AnalysisWindowController {
 		}
 	}
 	
+	/**
+	 * This method will take the time jump into the program for using
+	 */
 	@FXML
 	public void addIncrement() {
 		confirmIncrementBtn.setDisable(false);
 		timeIncrement.setEditable(true);
 	}
-
+	
+	/**
+	 * This method will move forward the frame to the time jump that user choose
+	 * @throws InterruptedException: Exception happen to make sure that program not crash when
+	 * user move to the time point that video don't have. 
+	 */
 	@FXML
 	public void moveForward() throws InterruptedException {
 		if (timer != null && !timer.isShutdown()) {
@@ -315,9 +367,13 @@ public class AnalysisWindowController {
 		if(project.getVideo().getEndFrameNum() >= newFrameNum){
 			videoBar.setValue((double)newFrameNum);
 		}
-
 	}
-
+	
+	/**
+	 * This method will move back the frame to the time jump that user choose
+	 * @throws InterruptedException:Exception happen to make sure that program not crash when
+	 * user move to the time point that video don't have. 
+	 */
 	@FXML
 	public void moveBack() throws InterruptedException {
 		if (timer != null && !timer.isShutdown()) {
@@ -331,7 +387,10 @@ public class AnalysisWindowController {
 		}
 	}
 	
-	
+	/**
+	 * This method will remove the time point that user set for the chick 
+	 * if they did it wrong
+	 */
 	@FXML
 	public void removeTimePoint() {
 		if(chickIDs.getValue() != null) {
@@ -342,20 +401,27 @@ public class AnalysisWindowController {
 			}
 		}
 	}
+	/**
+	 * This method will save the data that user are doing
+	 * @throws FileNotFoundException: Exception happen when program cannot be saved
+	 */
 	@FXML
 	public void saveProjectData() throws FileNotFoundException {
 		FileChooser fileChooser = new FileChooser();
 		File file = fileChooser.showSaveDialog(showBtn.getScene().getWindow());
+		String jsonFileName = file + ".json";
 		if(file != null) {
-			project.saveToFile(file);
+			project.saveToFile(jsonFileName);
 		}
 		
 	}
-	/*
-	 * Exporting CSV file.
-	 * Suggested file name as name of the video.
+	
+	/**
+	 * This method will export CSV data file for the movement of chicks and the 
+	 * average distance of each pair.
+	 * @throws FileNotFoundException: Exception happen when file cannot be export.
 	 */
-@FXML
+	@FXML
 	public void exportCSVData() throws FileNotFoundException{
 		
 		String filePath = project.getVideo().getFilePath();
@@ -365,8 +431,6 @@ public class AnalysisWindowController {
 		if (pos > 0) {
 		    filePath = filePath.substring(0, pos);
 		}
-		
-		
 		
 		String fileName = new File(filePath).getName();
 		System.out.println("suggested filename: "+ fileName);
@@ -382,10 +446,8 @@ public class AnalysisWindowController {
 			project.exportTimePointsToCSV(userFileName);
 			project.exportAverageDistances(averageDistance);
 		}
-		
 	
-		
 	}
-	
 
 }
+

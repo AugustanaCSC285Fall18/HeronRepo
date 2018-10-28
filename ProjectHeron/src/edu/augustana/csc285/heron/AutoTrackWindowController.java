@@ -44,6 +44,9 @@ public class AutoTrackWindowController implements AutoTrackListener {
 	private ProjectData project;
 	private Stage stage;
 	
+	/**
+	 * This method will initiate the GUI for auto tracking
+	 */
 	@FXML public void initialize() {
 		
 		//FIXME: this quick loading of a specific file and specific settings 
@@ -58,10 +61,19 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		sliderVideoTime.valueProperty().addListener((obs, oldV, newV) -> showFrameAt(newV.intValue())); 
 	}
 	
+	/**
+	 * This method will set the project data for using
+	 * @param project The project data which has been chose
+	 * @throws FileNotFoundException: Exception happen when there is no project to take.
+	 */
 	public void setProjectData(ProjectData project) throws FileNotFoundException {
 		this.project = project;
 	}
 	
+	/**
+	 * This method will make sure that the scene will fit with the video view
+	 * @param stage: condition for the video change to fit with
+	 */
 	public void initializeWithStage(Stage stage) {
 		this.stage = stage;
 		
@@ -70,6 +82,9 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		videoView.fitWidthProperty().bind(videoView.getScene().widthProperty());  
 	}
 	
+	/**
+	 * This method will choose the browse for the video to use
+	 */
 	@FXML
 	public void handleBrowse()  {
 		FileChooser fileChooser = new FileChooser();
@@ -80,6 +95,10 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		}		
 	}
 	
+	/**
+	 * This method will load the video to use in image view
+	 * @param filePath
+	 */
 	public void loadVideo(String filePath) {
 		Video video = project.getVideo();
 		sliderVideoTime.setMax(video.getTotalNumFrames()-1);
@@ -87,6 +106,10 @@ public class AutoTrackWindowController implements AutoTrackListener {
 
 	}
 	
+	/**
+	 * This method will show the frame base on it number
+	 * @param frameNum: the number of that frame
+	 */
 	public void showFrameAt(int frameNum) {
 		if (autotracker == null || !autotracker.isRunning()) {
 			project.getVideo().setCurrentFrameNum(frameNum);
@@ -97,6 +120,10 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		}		
 	}
 	
+	/**
+	 * This method will control the button start auto tracking
+	 * @throws InterruptedException: Exception will happen when video has problems.
+	 */
 	@FXML
 	public void handleStartAutotracking() throws InterruptedException {
 		if (autotracker == null || !autotracker.isRunning()) {
@@ -172,7 +199,4 @@ public class AutoTrackWindowController implements AutoTrackListener {
 		});	
 		
 	}
-	
-	
-	
 }
