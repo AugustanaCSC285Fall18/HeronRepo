@@ -87,6 +87,11 @@ public final class Utils
 		return image;
 	}
 	
+	/**
+	 * This method will change the image to mat and show it on the video view
+	 * @param matImg: the mat that program use to show image.
+	 * @return
+	 */
 	public static Image matToJavaFXImage(Mat matImg) {
 		// Note: the code in this method is thanks to Luigi De Russis and/or Alberto Sacco
 		// https://github.com/opencv-java/getting-started/tree/master/FXHelloCV
