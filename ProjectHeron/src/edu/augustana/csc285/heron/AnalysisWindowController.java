@@ -78,7 +78,7 @@ public class AnalysisWindowController {
 		int endTimeNumMinutes = (int)project.getVideo().convertFrameNumsToSeconds(project.getVideo().getEndFrameNum()) / 60;
 		startTime.setText("Start Time: " + startTimeNumMinutes + ":" +(startTimeNumSeconds < 10 ? ("0" + startTimeNumSeconds) : (""+ startTimeNumSeconds)));
 		endTime.setText("End Time: " + endTimeNumMinutes + ":" +(endTimeNumSeconds < 10 ? ("0" + endTimeNumSeconds) : (""+ endTimeNumSeconds)));
-		timeJump = project.getVideo().getFrameRate();
+		timeJump = 1;
 		fitVideo();
 		videoBar.setMax(project.getVideo().getTotalNumFrames() - 1);
 		videoBar.setValue(project.getVideo().getStartFrameNum());
@@ -122,13 +122,13 @@ public class AnalysisWindowController {
 				System.out.println("x: " + e.getX() + ", y: " + e.getY());
 				if (e.getButton() == MouseButton.PRIMARY) {
 					if(project.getVideo().inRectangle(e.getX(), e.getSceneY())){
-						if(chickIDs.getValue() != null && project.getVideo().getCurrentFrameNum() >= project.getVideo().getStartFrameNum() && 
-								project.getVideo().getCurrentFrameNum() <= project.getVideo().getEndFrameNum()) {
+						if(chickIDs.getValue() != null && project.getVideo().getCurrentFrameNum() >= project.getVideo().getStartFrameNum() - project.getVideo().getFrameRate() && 
+								project.getVideo().getCurrentFrameNum() <= project.getVideo().getEndFrameNum() + project.getVideo().getFrameRate()) {
 							if(!project.getAnimalTrackInTracks(chickIDs.getValue()).alreadyHasTime(project.getVideo().getCurrentFrameNum())) {
 								project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
 										e.getY()*project.getVideo().getFrameHeight()/canvasOverVideo.getHeight(), project.getVideo().getCurrentFrameNum());
 								gc.setFill(project.getAnimalTrackInTracks(chickIDs.getValue()).getColor());
-							gc.fillOval(e.getX()-3, e.getY()-3, 6, 6);
+								gc.fillOval(e.getX()-3, e.getY()-3, 6, 6);
 							} //else {
 								//project.getAnimalTrackInTracks(chickIDs.getValue()).getPositionHistory().remove(project.getAnimalTrackInTracks(chickIDs.getValue()).getTimePointAtTime(project.getVideo().getCurrentFrameNum()));
 								//project.getAnimalTrackInTracks(chickIDs.getValue()).add(e.getX()*project.getVideo().getFrameWidth()/canvasOverVideo.getWidth(),
@@ -186,6 +186,13 @@ public class AnalysisWindowController {
 						} else {
 							hasTrackBox.setSelected(false);
 						}
+						gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
+						for(AnimalTrack animal : project.getTracks()) {
+							gc.setFill(animal.getColor());
+							for(TimePoint point : animal.getTimePointsWithinInterval(project.getVideo().getCurrentFrameNum() - (int) project.getVideo().getFrameRate() * 3, project.getVideo().getCurrentFrameNum() + (int) project.getVideo().getFrameRate() * 3)){
+								gc.fillOval(point.getX() - 2, point.getY() - 2, 5, 5);
+							}
+						}
 					}
 
 				});
@@ -238,7 +245,7 @@ public class AnalysisWindowController {
 		if(paths.getValue() != null) {
 			System.out.println(paths.getValue());
 			gc.setFill(Color.RED);
-			gc.clearRect(canvasOverVideo.getLayoutX(), canvasOverVideo.getLayoutY(), canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
+			gc.clearRect(0, 0, canvasOverVideo.getWidth(), canvasOverVideo.getHeight());
 			for(datamodel.TimePoint point : project.getAnimalTrackInUnassignedSegments(paths.getValue()).getPositionHistory()) {
 				gc.fillOval(point.getX() * canvasOverVideo.getWidth() / project.getVideo().getFrameWidth(),
 						point.getY() * canvasOverVideo.getHeight() / project.getVideo().getFrameHeight(), 5, 5);

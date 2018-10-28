@@ -213,7 +213,7 @@ public class TimeWindowController {
 			
 			double ratioOfHeight = project.getVideo().getFrameHeight() / canvasOverVideo.getHeight();
 			double ratioOfWidth = project.getVideo().getFrameWidth() / canvasOverVideo.getWidth();
-			Rectangle2D arenaRect = new Rectangle2D(minXCanvas*ratioOfWidth,minYCanvas*ratioOfHeight,(minXCanvas+widthCanvas)*ratioOfWidth,(minYCanvas+heightCanvas)*ratioOfHeight); 
+			Rectangle2D arenaRect = new Rectangle2D(minXCanvas*ratioOfWidth,minYCanvas*ratioOfHeight,widthCanvas*ratioOfWidth,heightCanvas*ratioOfHeight); 
 			
 			project.getVideo().setArenaBounds(arenaRect);
 			
