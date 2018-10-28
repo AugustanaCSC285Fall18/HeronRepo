@@ -1,7 +1,7 @@
 package datamodel;
 
 /**
- *@author 
+ *@author Team Heron
  * Represents a Timepoint in the video.
  */
 public class TimePoint implements Comparable<TimePoint> {
