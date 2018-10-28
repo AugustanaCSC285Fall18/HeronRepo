@@ -197,26 +197,32 @@ public class Video {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_COUNT);
 	}
 	
+
 	/**
 	 * This method sets the x pixels per cm based on the parameter
 	 * @param ratio -the ratio of pixels per cm in x values
 	 */
+
 	public void setXPixelsPerCm(double ratio) {
 		xPixelsPerCm = ratio;
 	}
 	
+
 	/**
 	 * This method gives the x pixels per cm
 	 * @return -the x pixels per cm
 	 */
+
 	public double getXPixelsPerCm() {
 		return xPixelsPerCm;
 	}
 	
+
 	/**
 	 * This method sets the y pixels per cm based on the parameter
 	 * @param ratio -the ratio of pixels per cm in y values
 	 */
+
 	public void setYPixelsPerCm(double ratio) {
 		yPixelsPerCm = ratio;
 	}
@@ -237,26 +243,57 @@ public class Video {
 		return (xPixelsPerCm + yPixelsPerCm) / 2;
 	}
 	
+	/**
+	 * Gets the horizontal and vertical size of the
+	 * selected area.
+	 * @return The selected area.
+	 */
 	public Rectangle2D getArenaBounds() {
 		return trackArea;
 	}
 	
+	/**
+	 * Sets the selected area as the arena within
+	 * which tracking occurs.
+	 * @param trackArea The selected area.
+	 */
 	public void setArenaBounds(Rectangle2D trackArea) {
 		this.trackArea = trackArea;
 	}
 	
+	/**
+	 * Checks to see if the point is in the selected
+	 * arena for tracking.
+	 * @param x The horizontal position of the point.
+	 * @param y The vertical position of the point.
+	 * @return true if the point is within the arena
+	 *         bounds, and false otherwise.
+	 */
 	public boolean inRectangle(double x, double y) {
 		return trackArea.contains(x, y);
-//		return x >= trackArea.getMinX() && x <= trackArea.getMinX() + trackArea.getWidth() &&
-//			y >= trackArea.getY() && y <= trackArea.getY() + trackArea.getHeight();
 	}
+	
+	/**
+	 * Gets the width of the video file in pixels.
+	 * @return the video's width in pixels.
+	 */
 	public int getWidth() {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_WIDTH);
 	}
+	
+	/**
+	 * Gets the height of the video file in pixels.
+	 * @return The video's height in pixels.
+	 */
 	public int getHeight() {
 		return (int) videoCap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
 	}
 	
+	/**
+	 * Sets up the VideoCapture method.
+	 * @throws FileNotFoundException if the selected file
+	 * 								 cannot be found.
+	 */
 	synchronized void connectVideoCapture() throws FileNotFoundException {
 		this.videoCap = new VideoCapture(filePath);
 		if (!videoCap.isOpened()) {
@@ -264,6 +301,11 @@ public class Video {
 		}
 	}
 	
+	/**
+	 * Grabs the next frame from the video file
+	 * and displays it.
+	 * @return the next frame of the video file.
+	 */
 	public Mat grabFrame() {
 		// init everything
 		Mat frame = new Mat();
@@ -276,7 +318,7 @@ public class Video {
 
 				// if the frame is not empty, process it
 				if (!frame.empty()) {
-					// Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
+					
 				}
 
 			} catch (Exception e) {
@@ -288,10 +330,20 @@ public class Video {
 		return frame;
 	}
 	
+	/**
+	 * Sets the selected point as the origin (0,0) from
+	 * which to start measuring positions.
+	 * @param x The horizontal position of the selected point.
+	 * @param y The vertical position of the selected point.
+	 */
 	public void setCenterPoint(double x, double y) {
 		this.center= new Point2D(x,y);
 	}
 	
+	/**
+	 * Gets the 
+	 * @return
+	 */
 	public Point2D getCenterPoint() {
 		return this.center;
 	}
