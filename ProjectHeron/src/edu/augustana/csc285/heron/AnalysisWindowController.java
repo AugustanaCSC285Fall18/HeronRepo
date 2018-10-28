@@ -45,6 +45,7 @@ public class AnalysisWindowController {
 	@FXML private Button setBtn;
 	@FXML private Button showBtn;
 	@FXML private Button saveBtn;
+	@FXML private Button removeBtn;
 	@FXML private TextField chickID;
 	@FXML private Canvas canvasOverVideo;
 	@FXML private Label startTime;
@@ -330,6 +331,17 @@ public class AnalysisWindowController {
 		}
 	}
 	
+	
+	@FXML
+	public void removeTimePoint() {
+		if(chickIDs.getValue() != null) {
+			AnimalTrack chosenChick = project.getAnimalTrackInTracks(chickIDs.getValue());
+			TimePoint closestPoint = chosenChick.getClosestTimePoint(project.getVideo().getCurrentFrameNum());
+			if(closestPoint != null && Math.abs(project.getVideo().getCurrentFrameNum() - closestPoint.getFrameNum()) < project.getVideo().getFrameRate()) {
+				chosenChick.getPositionHistory().remove(closestPoint);
+			}
+		}
+	}
 	@FXML
 	public void saveProjectData() throws FileNotFoundException {
 		FileChooser fileChooser = new FileChooser();

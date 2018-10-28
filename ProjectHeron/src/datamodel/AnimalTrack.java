@@ -85,6 +85,18 @@ public class AnimalTrack {
 		}
 		return false;
 	}
+	
+	public TimePoint getClosestTimePoint(int frameNum) {
+		TimePoint closest = null;
+		int closestTime = Integer.MAX_VALUE;
+		for(TimePoint point : positionHistory) {
+			if(Math.abs(frameNum - point.getFrameNum()) < closestTime) {
+				closestTime = Math.abs(frameNum - point.getFrameNum());
+				closest = point;
+			}
+		}
+		return closest;
+	}
 	public TimePoint getFinalTimePoint() {
 		return positionHistory.get(positionHistory.size() - 1);
 	}
