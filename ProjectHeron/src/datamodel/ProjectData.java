@@ -3,6 +3,7 @@ package datamodel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -111,10 +112,13 @@ public void exportCSV(String fileName) throws FileNotFoundException {
 		writer.println("ChickID, Time(sec), X, Y");
 		for(AnimalTrack chick : tracks) {
 			for(TimePoint point : chick.getPositionHistory()) {
-				int time = (int) video.convertFrameNumsToSeconds(point.getFrameNum());
-				//double x = point.getX() - 
+				double time = video.convertFrameNumsToSeconds(point.getFrameNum());
+				double xInCm = (point.getX() - video.getCenterPoint().getX())/video.getXPixelsPerCm();
+				double yInCm = (point.getY() - video.getCenterPoint().getY())/video.getYPixelsPerCm();
+				DecimalFormat df = new DecimalFormat("#.##");
+				
 				//the format is ChickID, Time, X, Y
-				writer.println(chick.getAnimalID() + "," + time + "," + point.getX() + "," + point.getY());
+				writer.println(chick.getAnimalID() + ", " + df.format(time)+ ", " + df.format(xInCm) + ", " + df.format(yInCm));
 			}
 		}
 		writer.close();
