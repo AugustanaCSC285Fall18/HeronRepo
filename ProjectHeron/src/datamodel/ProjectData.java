@@ -108,7 +108,7 @@ public class ProjectData {
 		return distance / numPointComparisons;
 	}
 	
-	public void saveToFile(File saveFile) throws FileNotFoundException {
+	public void saveToFile(String saveFile) throws FileNotFoundException {
 		String json = toJSON();
 		PrintWriter out = new PrintWriter(saveFile);
 		out.print(json);
