@@ -3,12 +3,18 @@ package edu.augustana.csc285.heron;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+
 import datamodel.ProjectData;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -24,14 +30,17 @@ public class FileWindowController {
 	@FXML private Button BrowseBtn;
 	@FXML private Button NextBtn;
 	@FXML private Button loadBtn;
+	@FXML private Button aboutBtn;
 	@FXML private TextField fileField;
+	@FXML private ImageView imageView;
 	private ProjectData project;
 	private boolean newFile;
 	@FXML
-	public void initialize() {
+	public void initialize(){
 		NextBtn.setDisable(true);
 		fileField.setEditable(false);
-		
+		Image image = new Image("http://www.clipartandcrafts.com/clipart/holidays/easter/images/yellow-chick.gif");
+		imageView.setImage(image);
 	}
 	/**
 	 * This method allows the user to select a file that will be
@@ -99,5 +108,24 @@ public class FileWindowController {
 			primary.setMinHeight(root.getPrefHeight()+20);
 			primary.setScene(timeScene);
 		}
+	}
+	/**
+	 * This method will provide information about people who did this program.
+	 */
+	@FXML
+	public void handleAbout() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("About Dialog");
+		alert.setHeaderText("Information about ChickTrack Program Of Heron Team");
+		alert.setContentText("Member:\n "
+				+ "\tDuc Pham\n"
+				+ "\tJinsoo Park\n"
+				+ "\tEhren Braun\n"
+				+ "\tYafet Zeleke\n"
+				+ "Advisor:\n"
+				+ "\tForrest Stonedalt\n\n"
+				+ "CSC 285 at Augustana College\n"
+				+ "Special thanks for Math and Computer Department because they let us learn something at here.");
+		alert.showAndWait();
 	}
 }

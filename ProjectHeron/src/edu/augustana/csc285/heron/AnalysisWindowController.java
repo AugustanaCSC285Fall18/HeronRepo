@@ -376,15 +376,16 @@ public class AnalysisWindowController {
 		fileChooser.setInitialFileName(fileName);
 		File file = fileChooser.showSaveDialog(showBtn.getScene().getWindow());
 		String userFileName = file + ".csv";
-		
+		String averageDistance = file + "AverageDistances.csv";
 		if(file != null) {
 			System.out.println("user chose: "+userFileName);
-
-			project.exportCSV(userFileName);
+			project.exportTimePointsToCSV(userFileName);
+			project.exportAverageDistances(averageDistance);
 		}
 		
-		
+	
 		
 	}
+	
 
 }

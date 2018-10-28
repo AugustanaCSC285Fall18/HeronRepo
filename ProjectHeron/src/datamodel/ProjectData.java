@@ -72,9 +72,40 @@ public class ProjectData {
 		AnimalTrack chosenChick = getAnimalTrackInTracks(id);
 		double distance = 0;
 		for(int i = 0; i < chosenChick.size() - 1; i++) {
-			distance += chosenChick.getPositionHistory().get(i).getDistanceTo(chosenChick.getPositionHistory().get(i + 1)); 
+			double x1 = chosenChick.getPositionHistory().get(i).getX()/video.getXPixelsPerCm();
+			double y1 = chosenChick.getPositionHistory().get(i).getY()/video.getYPixelsPerCm();
+			double x2 = chosenChick.getPositionHistory().get(i + 1).getX()/video.getXPixelsPerCm();
+			double y2 = chosenChick.getPositionHistory().get(i + 1).getY()/video.getYPixelsPerCm();
+			double dx = (x1 - x2) * (x1 - x2);
+			double dy = (y1 - y2) * (y1 - y2);
+			distance += Math.sqrt(dx + dy);
 		}
 		return distance;
+	}
+	
+	public double averageDistance(AnimalTrack animal1,AnimalTrack animal2) {
+		AnimalTrack chosenChick = animal1.size() > animal2.size() ? animal2 : animal1;
+		AnimalTrack notChosenChick = animal1.size() > animal2.size() ? animal1 : animal2;
+		List<TimePoint> usedPoints = new ArrayList<TimePoint>();
+		int numPointComparisons = 0;
+		double distance = 0;
+		for(TimePoint point : chosenChick.getPositionHistory()) {
+			TimePoint closestPoint = notChosenChick.getClosestTimePoint(point.getFrameNum());
+			if(Math.abs(point.getFrameNum() - closestPoint.getFrameNum()) < video.getFrameRate() + 10) {
+				if(!usedPoints.contains(closestPoint)) {
+					usedPoints.add(closestPoint);
+					numPointComparisons++;
+					double x1 = point.getX() /video.getXPixelsPerCm();
+					double y1 = point.getY() /video.getYPixelsPerCm();
+					double x2 = closestPoint.getX() / video.getXPixelsPerCm();
+					double y2 = closestPoint.getY() / video.getYPixelsPerCm();
+					double dx = (x1 - x2) * (x1 - x2);
+					double dy = (y1 - y2) * (y1 - y2);
+					distance += Math.sqrt(dx + dy);
+				}
+			}
+		}
+		return distance / numPointComparisons;
 	}
 	
 	public void saveToFile(File saveFile) throws FileNotFoundException {
@@ -106,24 +137,34 @@ public class ProjectData {
 	 * @param file
 	 * @throws FileNotFoundException
 	 */
-public void exportCSV(String fileName) throws FileNotFoundException {
+	public void exportTimePointsToCSV(String fileName) throws FileNotFoundException {
 		PrintWriter writer = new PrintWriter(fileName);
+		DecimalFormat df = new DecimalFormat("#.##");
 		writer.println("ChickID, Time(sec), X, Y");
 		for(AnimalTrack chick : tracks) {
 			for(TimePoint point : chick.getPositionHistory()) {
 				double time = video.convertFrameNumsToSeconds(point.getFrameNum());
 				double xInCm = (point.getX() - video.getCenterPoint().getX())/video.getXPixelsPerCm();
 				double yInCm = (point.getY() - video.getCenterPoint().getY())/video.getYPixelsPerCm();
-				DecimalFormat df = new DecimalFormat("#.##");
 				
 				//the format is ChickID, Time, X, Y
 				writer.println(chick.getAnimalID() + ", " + df.format(time)+ ", " + df.format(xInCm) + ", " + df.format(yInCm));
 			}
+			writer.println("Distance Covered" + "," + df.format(distanceCovered(chick.getAnimalID())));
 		}
 		writer.close();
-		
-	
-	
 	}
 	
+	public void exportAverageDistances(String fileName) throws FileNotFoundException{
+		if(tracks.size() > 1) {
+			PrintWriter writer = new PrintWriter(fileName);
+			DecimalFormat df = new DecimalFormat("#.##");
+			for(int i = 0; i < this.tracks.size() - 1; i ++) {
+				for (int j = i + 1; j < this.tracks.size(); j++ ) {
+					writer.println("Average between " + tracks.get(i).getAnimalID() + " " + tracks.get(j).getAnimalID() + "," + df.format(averageDistance(tracks.get(i), tracks.get(j))));
+				}
+			}
+			writer.close();
+		}
+	}
 }
