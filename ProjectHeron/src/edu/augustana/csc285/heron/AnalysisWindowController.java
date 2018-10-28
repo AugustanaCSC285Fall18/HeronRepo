@@ -91,6 +91,9 @@ public class AnalysisWindowController {
 		videoBar.setMax(project.getVideo().getTotalNumFrames() - 1);
 		videoBar.setValue(project.getVideo().getStartFrameNum());
 		List<String> remove = new ArrayList<String>();
+		for(AnimalTrack animal : project.getTracks()) {
+			chickIDs.getItems().add(animal.getAnimalID());
+		}
 		for(datamodel.AnimalTrack animal : project.getUnassignedSegments()) {
 			if(animal.size() < project.getVideo().getFrameRate() * 2) {
 				remove.add(animal.getAnimalID());
